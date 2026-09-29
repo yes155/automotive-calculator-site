@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+---
+
+<Layout title="Technical Guides" description="Technical guides for wheel offset, compression ratio, bore vs stroke, horsepower vs torque, and BSFC.">
+  <section class="hub-page">
+    <header>
+      <h1>Technical Guides</h1>
+      <p>In-depth explanations to help you understand the calculators and make better decisions.</p>
+    </header>
+    <RelatedTools tools={[
+      { title: 'Wheel Offset Explained', href: '/guides/wheel-offset-explained/', description: 'Positive, zero, negative offset and how width interacts' },
+      { title: 'Compression Ratio Explained', href: '/guides/compression-ratio-explained/', description: 'Static vs dynamic CR, component volumes, octane considerations' },
+      { title: 'Bore vs Stroke', href: '/guides/bore-vs-stroke/', description: 'Oversquare, square, undersquare geometries explained' },
+      { title: 'Horsepower vs Torque', href: '/guides/horsepower-vs-torque/', description: 'The relationship, 5252 crossover, and driving implications' },
+      { title: 'BSFC Explained', href: '/guides/bsfc-explained/', description: 'What BSFC measures, why it varies, and injector sizing' },
+    ]} />
+    <div class="hub-section">
+      <h2>Phase 2 Guides (Planned)</h2>
+      <RelatedTools tools={[
+        { title: 'How to Read Tire Size', href: '/guides/how-to-read-tire-size/', description: 'Decoding P-metric, LT, and Euro-metric codes' },
+        { title: 'Tire Diameter vs Wheel Size', href: '/guides/tire-diameter-vs-wheel-size/', description: 'Plus-sizing, aspect ratio, and ride quality' },
+      ]} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hub-page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .hub-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .hub-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .hub-page header p { color: var(--text-secondary); font-size: 0.95rem; }
+  .hub-section { margin-top: 2rem; }
+  .hub-section h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-primary); }
+</style>

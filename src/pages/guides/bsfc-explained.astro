@@ -1,0 +1,114 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="BSFC Explained" description="What brake-specific fuel consumption measures, why it varies, and how it affects injector sizing.">
+  <article class="guide-page">
+    <header>
+      <h1>BSFC Explained</h1>
+      <p class="guide-meta">Brake-specific fuel consumption — what it is, why it varies, and injector sizing</p>
+    </header>
+    <section>
+      <h2>What Is BSFC?</h2>
+      <p><strong>Brake-Specific Fuel Consumption (BSFC)</strong> measures how efficiently an engine converts fuel into power:</p>
+      <p class="formula-inline">BSFC = Fuel Mass Flow Rate / Power Output</p>
+      <p>Units: <strong>lb / (hp × hr)</strong> or <strong>g / (kW × hr)</strong></p>
+      <p>Lower BSFC = more efficient (less fuel per horsepower). Higher BSFC = less efficient.</p>
+    </section>
+    <section>
+      <h2>Typical BSFC Ranges</h2>
+      <table class="guide-table">
+        <thead><tr><th>Engine Type / Condition</th><th>BSFC (lb/hp/hr)</th><th>BSFC (g/kWh)</th></tr></thead>
+        <tbody>
+          <tr><td>Modern NA gasoline (best efficiency)</td><td>0.40–0.45</td><td>243–273</td></tr>
+          <tr><td>Typical NA gasoline (street)</td><td>0.45–0.55</td><td>273–334</td></tr>
+          <tr><td>Forced induction gasoline (turbo/supercharged)</td><td>0.55–0.65</td><td>334–395</td></tr>
+          <tr><td>High-boost / race gasoline</td><td>0.60–0.75</td><td>365–456</td></tr>
+          <tr><td>E85 / Flex fuel (gasoline mode)</td><td>0.50–0.60</td><td>304–365</td></tr>
+          <tr><td>E85 / Flex fuel (E85 mode)</td><td>0.65–0.85</td><td>395–517</td></tr>
+          <tr><td>Methanol</td><td>0.80–1.00+</td><td>487–608+</td></tr>
+          <tr><td>Diesel (modern turbo)</td><td>0.32–0.40</td><td>195–243</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Why BSFC Varies</h2>
+      <h3>Load and RPM</h3>
+      <p>BSFC is lowest at peak torque RPM (best volumetric efficiency) and increases at both lower and higher RPM. At WOT, BSFC follows a U-shaped curve across the RPM range.</p>
+      <h3>Air-Fuel Ratio (Lambda)</h3>
+      <p>Stoichiometric (λ=1.0) is not minimum BSFC. Best BSFC is typically slightly rich (λ≈0.90–0.95 for gasoline) due to cooling and flame speed effects. Leaner than stoichiometric increases BSFC.</p>
+      <h3>Compression Ratio</h3>
+      <p>Higher compression improves thermodynamic efficiency → lower BSFC.</p>
+      <h3>Combustion Chamber Design</h3>
+      <p>Fast-burn chambers, good quench, and optimal spark plug location reduce BSFC.</p>
+      <h3>Forced Induction</h3>
+      <p>Turbo/supercharged engines run richer (λ≈0.75–0.85) for cooling and knock prevention → higher BSFC. Intercooler efficiency, boost pressure, and turbine backpressure all affect it.</p>
+      <h3>Fuel Type</h3>
+      <p>E85 requires ~30% more mass flow for same energy → BSFC appears higher numerically, but energy-specific consumption may be similar.</p>
+    </section>
+    <section>
+      <h2>BSFC in Injector Sizing</h2>
+      <p>The <a href="/calculators/fuel-injector/">Fuel Injector Calculator</a> uses BSFC to estimate total fuel mass flow:</p>
+      <p class="formula-inline">Total lb/hr = Target HP × BSFC</p>
+      <p class="formula-inline">Per Injector = Total / (Injector Count × Duty Cycle)</p>
+      <p><strong>Critical:</strong> Do not use a single "universal" BSFC value. The calculator requires you to enter BSFC explicitly so you choose an assumption appropriate for your combination.</p>
+      <h3>Choosing a BSFC Value</h3>
+      <ol>
+        <li>Start with the table above for your engine type</li>
+        <li>If dyno-tuned with known fuel flow, calculate actual BSFC: BSFC = Actual lb/hr ÷ Actual HP</li>
+        <li>For safety margin, add 0.05–0.10 to your estimate</li>
+        <li>Remember: injector duty cycle should stay ≤85%</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Common Mistakes</h2>
+      <ul>
+        <li>Using 0.50 for everything — it's only correct for efficient NA gasoline at peak torque</li>
+        <li>Forgetting E85 requires ~40% more cc/min for same hp (lower energy density)</li>
+        <li>Assuming BSFC is constant across RPM — it's not</li>
+        <li>Sizing injectors at 100% duty cycle — leaves no margin for altitude, fuel variation, injector variance</li>
+        <li>Not accounting for fuel pressure differences (injector ratings typically at 43.5 psi / 3 bar)</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Key Takeaways</h2>
+      <ul>
+        <li>BSFC is a measure of efficiency, not a fixed constant</li>
+        <li>Typical range: 0.40–0.85 lb/hp/hr depending on engine and fuel</li>
+        <li>Always choose BSFC deliberately for your combination</li>
+        <li>Use the calculator with your chosen BSFC — don't rely on hidden presets</li>
+        <li>Verify final sizing with injector manufacturer data and dyno tuning</li>
+        <li>Reference <a href="https://www.sae.org/" target="_blank" rel="noopener">SAE International</a> standards for fuel system design and <a href="https://www.epa.gov/" target="_blank" rel="noopener">EPA</a> emissions guidelines</li>
+      </ul>
+    </section>
+    <nav class="guide-nav">
+      <a href="/calculators/fuel-injector/" class="btn-primary">Fuel Injector Calculator</a>
+      <a href="/fueling/" class="btn-secondary">Fueling Hub</a>
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .guide-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; line-height: 1.7; }
+  .guide-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .guide-meta { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+  .guide-page h2 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; padding-bottom: 0.375rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h3 { font-size: 0.95rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+  .guide-page p { margin: 0 0 0.75rem; color: var(--text-secondary); }
+  .guide-page ul, .guide-page ol { margin: 0 0 0.75rem 1.25rem; color: var(--text-secondary); }
+  .guide-page li { margin-bottom: 0.375rem; }
+  .guide-page strong { color: var(--text-primary); }
+  .guide-page a { color: var(--accent); }
+  .formula-inline { font-family: var(--font-mono); background: var(--bg-tertiary); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: block; margin: 0.75rem 0; font-size: 0.9rem; color: var(--accent); }
+  .guide-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.8rem; }
+  .guide-table th, .guide-table td { padding: 0.5rem 0.5rem; border: 1px solid var(--border-primary); text-align: left; }
+  .guide-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+  .guide-table tr:nth-child(even) td { background: var(--bg-secondary); }
+  .guide-nav { display: flex; gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg-primary); text-decoration: none; }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+</style>

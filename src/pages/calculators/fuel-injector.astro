@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculateFuelInjector, validateFuelInjector, type FuelInjectorInput } from '../../lib/calculators/fuelInjector.ts';
+
+const url = new URL(Astro.url);
+const horsepower = parseFloat(url.searchParams.get('horsepower') || '400');
+const bsfc = parseFloat(url.searchParams.get('bsfc') || '0.5');
+const injectorCount = parseInt(url.searchParams.get('injectorCount') || '4');
+const dutyCycle = parseFloat(url.searchParams.get('dutyCycle') || '0.8');
+const fuelDensity = parseFloat(url.searchParams.get('fuelDensity') || '0.75');
+const input: FuelInjectorInput = { horsepower, bsfc, injectorCount, dutyCycle, fuelDensity };
+const validation = validateFuelInjector(input);
+const result = calculateFuelInjector(input);
+const canonical = '/calculators/fuel-injector/';
+---
+
+<Layout title="Fuel Injector Calculator" description="Calculate required fuel injector flow in lb/hr and cc/min from target horsepower, BSFC, injector count, duty cycle, and fuel density." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Fuel Injector Calculator', url: '/calculators/fuel-injector/' }]}>
+  <CalculatorShell title="Fuel Injector Calculator" description="Estimate required injector flow (lb/hr and cc/min per injector) from target horsepower, BSFC, number of injectors, max duty cycle, and fuel density." calculatorId="fuel-injector">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="fuel-injector">
+      <fieldset>
+        <legend>Engine & Fuel</legend>
+        <NumberField id="horsepower" label="Target Horsepower" value={horsepower} min={50} max={2000} step={1} error={validation.errors.find(e => e.includes('Horsepower'))} placeholder="e.g., 400" />
+        <NumberField id="bsfc" label="BSFC (lb/hp/hr)" value={bsfc} min={0.3} max={0.8} step={0.01} error={validation.errors.find(e => e.includes('BSFC'))} warning={validation.warnings.find(w => w.includes('BSFC'))} placeholder="e.g., 0.50" />
+        <NumberField id="fuelDensity" label="Fuel Density" unit="g/mL" value={fuelDensity} min={0.7} max={0.9} step={0.01} error={validation.errors.find(e => e.includes('Fuel density'))} placeholder="e.g., 0.75 (gasoline), 0.79 (E85)" />
+      </fieldset>
+      <fieldset>
+        <legend>Injector Setup</legend>
+        <NumberField id="injectorCount" label="Number of Injectors" value={injectorCount} min={1} max={16} step={1} error={validation.errors.find(e => e.includes('Injector'))} placeholder="e.g., 4" />
+        <NumberField id="dutyCycle" label="Max Duty Cycle" value={dutyCycle} min={0.1} max={1.0} step={0.01} error={validation.errors.find(e => e.includes('Duty'))} warning={validation.warnings.find(w => w.includes('Duty'))} placeholder="e.g., 0.80 (80%)" />
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/fuel-injector/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+    <ResultCard slot="results" primaryValue={`${result.perInjectorCcMin.toFixed(0)} cc/min (${result.perInjectorLbHr.toFixed(1)} lb/hr)`} primaryLabel="Per Injector Flow" secondaryValues={[
+      { label: 'Total Fuel Flow', value: `${result.totalLbHr.toFixed(1)} lb/hr (${result.totalCcMin.toFixed(0)} cc/min)` },
+      { label: 'Per Injector (lb/hr)', value: `${result.perInjectorLbHr.toFixed(1)}` },
+      { label: 'Injectors', value: injectorCount.toString() },
+      { label: 'Duty Cycle', value: `${(dutyCycle * 100).toFixed(0)}%` },
+      { label: 'BSFC', value: bsfc.toFixed(2) },
+      { label: 'Fuel Density', value: `${fuelDensity} g/mL` },
+    ]} interpretation={result.interpretation} />
+    <FormulaBlock slot="explanation" title="Formula" formula={`total_lb_hr = horsepower × BSFC\nper_injector_lb_hr = total_lb_hr / (injector_count × duty_cycle)\ncc_min = per_injector_lb_hr × 453.59237 / 60 / density_g_ml`} variables={[
+      { symbol: 'horsepower', name: 'Target power', unit: 'hp' },
+      { symbol: 'BSFC', name: 'Brake-specific fuel consumption', unit: 'lb/hp/hr' },
+      { symbol: 'injector_count', name: 'Number of injectors' },
+      { symbol: 'duty_cycle', name: 'Max injector duty cycle', unit: 'decimal (0–1)' },
+      { symbol: 'density', name: 'Fuel density', unit: 'g/mL' },
+    ]} notes={[
+      'Typical BSFC: 0.45–0.50 (NA gasoline), 0.55–0.65 (forced induction gasoline), 0.60–0.75 (E85).',
+      'Do not silently use a performance-sensitive BSFC preset — name the assumption and let the user edit it.',
+      'Typical fuel density: 0.72–0.78 g/mL (gasoline), ~0.79 g/mL (E85).',
+      'Duty cycle >85% risks injector overheating and inconsistent flow.',
+    ]} />
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> 400 hp, BSFC 0.50, 4 injectors, 80% duty, gasoline (0.75 g/mL)</p>
+      <ul>
+        <li>Total: 400 × 0.50 = <strong>200 lb/hr</strong></li>
+        <li>Per injector: 200 / (4 × 0.8) = <strong>62.5 lb/hr</strong></li>
+        <li>cc/min: 62.5 × 453.59237 / 60 / 0.75 = <strong>630 cc/min</strong></li>
+      </ul>
+      <p><strong>Same setup, E85 (0.79 g/mL):</strong></p>
+      <ul>
+        <li>cc/min: 62.5 × 453.59237 / 60 / 0.79 = <strong>598 cc/min</strong></li>
+      </ul>
+    </div>
+    <div slot="limitations" class="limitations">
+      <p><strong>Important limitations:</strong></p>
+      <ul>
+        <li>Real sizing depends on fuel pressure, injector characterization data, fuel type, target lambda/AFR</li>
+        <li>BSFC varies significantly with engine design, compression, cam, tuning, load</li>
+        <li>Injector flow ratings typically at 43.5 psi (3 bar) — flow changes with pressure</li>
+        <li>Pulse width, latency, and dead time affect actual delivered fuel</li>
+        <li>Always verify with injector manufacturer data and dyno tuning</li>
+      </ul>
+    </div>
+    <RelatedTools slot="related" tools={[
+      { title: 'BSFC Explained', href: '/guides/bsfc-explained/', description: 'What BSFC measures and why it varies' },
+      { title: 'Horsepower Calculator', href: '/calculators/horsepower/', description: 'Torque × RPM → hp/kW' },
+      { title: 'Fueling Hub', href: '/fueling/', description: 'All fuel system tools' },
+    ]} />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculateFuelInjector } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="fuel-injector"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculateFuelInjector(parseFloat(fd.get('horsepower')), parseFloat(fd.get('bsfc')), parseInt(fd.get('injectorCount')), parseFloat(fd.get('dutyCycle')), parseFloat(fd.get('fuelDensity')));
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.perInjectorCcMin.toFixed(0)} cc/min (${r.perInjectorLbHr.toFixed(1)} lb/hr)</span><span class="result-label">Per Injector Flow</span></div><dl class="result-secondary"><div class="result-row"><dt>Total Fuel Flow</dt><dd>${r.totalLbHr.toFixed(1)} lb/hr (${r.totalCcMin.toFixed(0)} cc/min)</dd></div><div class="result-row"><dt>Per Injector (lb/hr)</dt><dd>${r.perInjectorLbHr.toFixed(1)}</dd></div><div class="result-row"><dt>Injectors</dt><dd>${fd.get('injectorCount')}</dd></div><div class="result-row"><dt>Duty Cycle</dt><dd>${(parseFloat(fd.get('dutyCycle')) * 100).toFixed(0)}%</dd></div><div class="result-row"><dt>BSFC</dt><dd>${parseFloat(fd.get('bsfc')).toFixed(2)}</dd></div><div class="result-row"><dt>Fuel Density</dt><dd>${fd.get('fuelDensity')} g/mL</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+</style>

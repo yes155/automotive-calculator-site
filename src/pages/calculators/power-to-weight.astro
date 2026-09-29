@@ -1,0 +1,140 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculatePowerToWeight, validatePowerToWeight, type PowerToWeightInput } from '../../lib/calculators/powerToWeight.ts';
+
+const url = new URL(Astro.url);
+const power = parseFloat(url.searchParams.get('power') || '300');
+const powerUnit = (url.searchParams.get('powerUnit') as 'hp' | 'kw') || 'hp';
+const weight = parseFloat(url.searchParams.get('weight') || '3000');
+const weightUnit = (url.searchParams.get('weightUnit') as 'lb' | 'kg') || 'lb';
+const input: PowerToWeightInput = { power, powerUnit, weight, weightUnit };
+const validation = validatePowerToWeight(input);
+const result = calculatePowerToWeight(input);
+const canonical = '/calculators/power-to-weight/';
+---
+
+<Layout title="Power-to-Weight Ratio Calculator" description="Calculate power-to-weight ratio in multiple units: hp/lb, hp/ton, kW/kg, W/kg, and inverse ratios. Supports hp/kW and lb/kg inputs." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Power-to-Weight Ratio Calculator', url: '/calculators/power-to-weight/' }]}>
+  <CalculatorShell title="Power-to-Weight Ratio Calculator" description="Calculate power-to-weight ratio in multiple units. Enter power (hp or kW) and weight (lb or kg) — get hp/lb, hp/ton, kW/kg, W/kg, and inverse ratios." calculatorId="power-to-weight">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="power-to-weight">
+      <fieldset>
+        <legend>Power</legend>
+        <div class="unit-group">
+          <NumberField id="power" label="Power" value={power} min={1} max={5000} step={1} error={validation.errors.find(e => e.includes('Power'))} placeholder="e.g., 300" />
+          <select id="powerUnit" name="powerUnit" class="unit-select" onchange="this.form.querySelector('button[type=submit]').click()">
+            <option value="hp" selected={powerUnit === 'hp'}>hp</option>
+            <option value="kw" selected={powerUnit === 'kw'}>kW</option>
+          </select>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Weight</legend>
+        <div class="unit-group">
+          <NumberField id="weight" label="Weight" value={weight} min={500} max={10000} step={10} error={validation.errors.find(e => e.includes('Weight'))} placeholder="e.g., 3000" />
+          <select id="weightUnit" name="weightUnit" class="unit-select" onchange="this.form.querySelector('button[type=submit]').click()">
+            <option value="lb" selected={weightUnit === 'lb'}>lb</option>
+            <option value="kg" selected={weightUnit === 'kg'}>kg</option>
+          </select>
+        </div>
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/power-to-weight/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+    <ResultCard slot="results" primaryValue={`${result.hpPerLb.toFixed(4)} hp/lb`} primaryLabel="Power-to-Weight" secondaryValues={[
+      { label: 'hp per US Ton', value: `${result.hpPerTon.toFixed(0)}` },
+      { label: 'kW/kg', value: `${result.kwPerKg.toFixed(3)}` },
+      { label: 'W/kg', value: `${result.wPerKg.toFixed(0)}` },
+      { label: 'lb/hp', value: `${result.lbPerHp.toFixed(2)}` },
+      { label: 'kg/kW', value: `${result.kgPerKw.toFixed(2)}` },
+    ]} interpretation={result.interpretation} />
+    <FormulaBlock slot="explanation" title="Formula" formula={`hp/lb = power_hp / weight_lb\nhp/ton = power_hp / (weight_lb / 2000)\nkW/kg = power_kW / weight_kg\nW/kg = kW/kg × 1000\nlb/hp = weight_lb / power_hp\nkg/kW = weight_kg / power_kW`} variables={[
+      { symbol: 'power_hp', name: 'Power in horsepower', unit: 'hp' },
+      { symbol: 'power_kW', name: 'Power in kilowatts', unit: 'kW' },
+      { symbol: 'weight_lb', name: 'Weight in pounds', unit: 'lb' },
+      { symbol: 'weight_kg', name: 'Weight in kilograms', unit: 'kg' },
+      { symbol: '1 hp', name: 'Mechanical horsepower', unit: '= 0.745699872 kW' },
+      { symbol: '1 lb', name: 'Pound', unit: '= 0.45359237 kg' },
+    ]} notes={[
+      '1 mechanical hp = 0.745699872 kW exactly.',
+      '1 lb = 0.45359237 kg exactly.',
+      'US ton = 2,000 lb (not metric tonne).',
+      'Power and weight must both be > 0.',
+    ]} />
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> 300 hp, 3,000 lb</p>
+      <ul>
+        <li>hp/lb = 300 / 3000 = <strong>0.1000</strong></li>
+        <li>hp/ton = 300 / (3000/2000) = <strong>200</strong></li>
+        <li>kW = 300 × 0.7457 = 223.7; kg = 3000 × 0.4536 = 1360.8</li>
+        <li>kW/kg = 223.7 / 1360.8 = <strong>0.164</strong></li>
+        <li>W/kg = 0.164 × 1000 = <strong>164</strong></li>
+        <li>lb/hp = 3000 / 300 = <strong>10.00</strong></li>
+      </ul>
+      <p><strong>Mixed units:</strong> 300 hp, 1,361 kg</p>
+      <ul>
+        <li>hp/lb = 300 / 3000 = <strong>0.1000</strong></li>
+        <li>kg/kW = 1361 / 223.7 = <strong>6.08</strong></li>
+      </ul>
+    </div>
+    <div slot="limitations" class="limitations">
+      <p><strong>Limitations:</strong></p>
+      <ul>
+        <li>Power-to-weight is a single metric — does not capture torque curve, gearing, traction, aero</li>
+        <li>Crank hp vs wheel hp changes ratio by ~15–20%</li>
+        <li>Weight should include driver, fluids, cargo for accurate vehicle ratio</li>
+        <li>Does not indicate where in RPM range power is made</li>
+      </ul>
+    </div>
+    <RelatedTools slot="related" tools={[
+      { title: 'Horsepower Calculator', href: '/calculators/horsepower/', description: 'Torque × RPM → hp/kW' },
+      { title: 'Quarter Mile Estimator', href: '/calculators/quarter-mile/', description: 'Empirical ET and trap speed' },
+      { title: 'Horsepower vs Torque', href: '/guides/horsepower-vs-torque/', description: 'The relationship and 5252 crossover' },
+    ]} />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculatePowerToWeight } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="power-to-weight"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculatePowerToWeight(parseFloat(fd.get('power')), fd.get('powerUnit') as 'hp' | 'kw', parseFloat(fd.get('weight')), fd.get('weightUnit') as 'lb' | 'kg');
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.hpPerLb.toFixed(4)} hp/lb</span><span class="result-label">Power-to-Weight</span></div><dl class="result-secondary"><div class="result-row"><dt>hp per US Ton</dt><dd>${r.hpPerTon.toFixed(0)}</dd></div><div class="result-row"><dt>kW/kg</dt><dd>${r.kwPerKg.toFixed(3)}</dd></div><div class="result-row"><dt>W/kg</dt><dd>${r.wPerKg.toFixed(0)}</dd></div><div class="result-row"><dt>lb/hp</dt><dd>${r.lbPerHp.toFixed(2)}</dd></div><div class="result-row"><dt>kg/kW</dt><dd>${r.kgPerKw.toFixed(2)}</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .unit-group { display: flex; gap: 0.5rem; }
+  .unit-group > *:first-child { flex: 1; }
+  .unit-select { padding: 0.625rem 0.75rem; font-size: 0.85rem; font-family: var(--font-sans); font-weight: 500; color: var(--text-primary); background: var(--bg-tertiary); border: 1px solid var(--border-secondary); border-radius: var(--radius-md); cursor: pointer; min-width: 80px; }
+  .unit-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  @media (max-width: 480px) { .unit-group { flex-direction: column; } }
+</style>

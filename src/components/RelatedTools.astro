@@ -1,0 +1,63 @@
+---
+// RelatedTools.astro - Line-based navigation between tools
+interface Props {
+  tools: { title: string; href: string; description?: string }[];
+}
+const { tools } = Astro.props;
+---
+
+<nav class="related-tools" aria-label="Related calculators and guides">
+  <ul>
+    {tools.map(tool => (
+      <li>
+        <a href={tool.href} class="tool-link">
+          <span class="tool-title">{tool.title}</span>
+          {tool.description && <span class="tool-desc">{tool.description}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .related-tools ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.5rem;
+  }
+  .tool-link {
+    display: block;
+    padding: 0.875rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition);
+  }
+  .tool-link:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    transform: translateY(-1px);
+  }
+  .tool-link:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .tool-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 0.125rem;
+  }
+  .tool-desc {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+</style>

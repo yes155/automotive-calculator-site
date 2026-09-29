@@ -1,0 +1,136 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculateQuarterMile, validateQuarterMile, type QuarterMileInput } from '../../lib/calculators/quarterMile.ts';
+
+const url = new URL(Astro.url);
+const weight = parseFloat(url.searchParams.get('weight') || '3500');
+const weightUnit = (url.searchParams.get('weightUnit') as 'lb' | 'kg') || 'lb';
+const horsepower = parseFloat(url.searchParams.get('horsepower') || '400');
+const powerType = (url.searchParams.get('powerType') as 'crank' | 'wheel' | undefined) || 'crank';
+const input: QuarterMileInput = { weight, weightUnit, horsepower, powerType };
+const validation = validateQuarterMile(input);
+const result = calculateQuarterMile(input);
+const canonical = '/calculators/quarter-mile/';
+---
+
+<Layout title="Quarter Mile Calculator" description="Estimate quarter-mile elapsed time and trap speed from vehicle weight and horsepower. Empirical model with clear limitations." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Quarter Mile Calculator', url: '/calculators/quarter-mile/' }]}>
+  <CalculatorShell title="Quarter Mile Calculator" description="Estimate quarter-mile ET and trap speed from vehicle weight and horsepower. Based on empirical constants (5.825 and 234)." calculatorId="quarter-mile">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="quarter-mile">
+      <fieldset>
+        <legend>Vehicle Specs</legend>
+        <div class="weight-group">
+          <NumberField id="weight" label="Vehicle Weight" value={weight} min={1000} max={10000} step={10} error={validation.errors.find(e => e.includes('Vehicle weight'))} placeholder="e.g., 3500" />
+          <select id="weightUnit" name="weightUnit" class="unit-select" onchange="this.form.querySelector('button[type=submit]').click()">
+            <option value="lb" selected={weightUnit === 'lb'}>lb</option>
+            <option value="kg" selected={weightUnit === 'kg'}>kg</option>
+          </select>
+        </div>
+        <NumberField id="horsepower" label="Horsepower" value={horsepower} min={50} max={2000} step={1} error={validation.errors.find(e => e.includes('Horsepower'))} placeholder="e.g., 400" />
+        <select id="powerType" name="powerType" class="unit-select" onchange="this.form.querySelector('button[type=submit]').click()">
+          <option value="crank" selected={powerType === 'crank'}>Crank HP</option>
+          <option value="wheel" selected={powerType === 'wheel'}>Wheel HP</option>
+        </select>
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/quarter-mile/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+    <ResultCard slot="results" primaryValue={`${result.etSeconds.toFixed(2)}s @ ${result.trapSpeedMph.toFixed(1)} MPH`} primaryLabel="Estimated Quarter Mile" secondaryValues={[
+      { label: 'Vehicle Weight', value: `${(weightUnit === 'lb' ? weight : weight / 0.45359237).toLocaleString()} lb` },
+      { label: 'Horsepower', value: `${horsepower} (${powerType})` },
+      { label: 'Power-to-Weight', value: `${result.powerToWeightRatio.toFixed(4)} hp/lb` },
+      { label: 'Empirical Constants', value: 'ET: 5.825, Trap: 234' },
+    ]} interpretation={result.interpretation} />
+    <FormulaBlock slot="explanation" title="Empirical Formula" formula={`ET (seconds) = 5.825 × (weight_lb / horsepower)^(1/3)\nTrap Speed (MPH) = 234 × (horsepower / weight_lb)^(1/3)\nPower-to-Weight = horsepower / weight_lb`} variables={[
+      { symbol: 'weight_lb', name: 'Vehicle weight', unit: 'lb' },
+      { symbol: 'horsepower', name: 'Engine power', unit: 'hp' },
+      { symbol: '5.825', name: 'ET constant (empirical)' },
+      { symbol: '234', name: 'Trap speed constant (empirical)' },
+    ]} notes={[
+      'Constants 5.825 and 234 are empirical — not derived from physical law.',
+      'Model assumes typical street tire traction, manual/auto transmission, average launch.',
+      'Original source: Patrick Hale / Racing Systems Analysis (1980s drag racing data).',
+      'Results are estimates for comparison only — not predictions of actual runs.',
+    ]} />
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> 3,500 lb, 400 hp</p>
+      <ul>
+        <li>Weight/HP ratio: 3500 / 400 = 8.75</li>
+        <li>ET = 5.825 × 8.75^(1/3) = 5.825 × 2.06 = <strong>12.00s</strong></li>
+        <li>Trap = 234 × (1/8.75)^(1/3) = 234 × 0.486 = <strong>113.6 MPH</strong></li>
+        <li>Power-to-weight: 400 / 3500 = <strong>0.114 hp/lb</strong></li>
+      </ul>
+      <p><strong>High power example:</strong> 2,500 lb, 600 hp</p>
+      <ul>
+        <li>ET = 5.825 × (2500/600)^(1/3) = <strong>9.39s</strong></li>
+        <li>Trap = 234 × (600/2500)^(1/3) = <strong>145.4 MPH</strong></li>
+      </ul>
+    </div>
+    <div slot="limitations" class="limitations">
+      <p><strong>Critical limitations — this is an empirical estimate, NOT a prediction:</strong></p>
+      <ul>
+        <li><strong>Traction:</strong> Wheel spin, surface prep, tire compound dramatically affect ET</li>
+        <li><strong>Gearing:</strong> Transmission ratios, final drive, shift points change acceleration</li>
+        <li><strong>Launch:</strong> Driver skill, launch RPM, 2-step, brake boost vary results</li>
+        <li><strong>Aero:</strong> Drag coefficient, frontal area affect trap speed at high HP</li>
+        <li><strong>Drivetrain:</strong> Manual vs auto, torque converter, diff type, driveline loss</li>
+        <li><strong>Weather:</strong> Temperature, humidity, altitude, DA (density altitude)</li>
+        <li><strong>Track:</strong> Surface grip, elevation, wind, prep quality</li>
+        <li><strong>Power type:</strong> Crank HP vs Wheel HP changes estimate by 15–20%</li>
+      </ul>
+      <p>Always verify with actual track testing. Use for relative comparison only.</p>
+    </div>
+    <RelatedTools slot="related" tools={[
+      { title: 'Power-to-Weight Ratio', href: '/calculators/power-to-weight/', description: 'hp/lb, hp/ton, kW/kg, W/kg' },
+      { title: 'Horsepower Calculator', href: '/calculators/horsepower/', description: 'Torque × RPM → hp/kW' },
+      { title: 'Methodology Source', href: '#', description: 'Patrick Hale / Racing Systems Analysis constants' },
+    ]} />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculateQuarterMile } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="quarter-mile"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculateQuarterMile(parseFloat(fd.get('weight')), fd.get('weightUnit') as 'lb' | 'kg', parseFloat(fd.get('horsepower')), fd.get('powerType') as 'crank' | 'wheel' | undefined);
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.etSeconds.toFixed(2)}s @ ${r.trapSpeedMph.toFixed(1)} MPH</span><span class="result-label">Estimated Quarter Mile</span></div><dl class="result-secondary"><div class="result-row"><dt>Vehicle Weight</dt><dd>${((fd.get('weightUnit') === 'lb' ? parseFloat(fd.get('weight')) : parseFloat(fd.get('weight')) / 0.45359237)).toLocaleString()} lb</dd></div><div class="result-row"><dt>Horsepower</dt><dd>${fd.get('horsepower')} (${fd.get('powerType') || 'crank'})</dd></div><div class="result-row"><dt>Power-to-Weight</dt><dd>${r.powerToWeightRatio.toFixed(4)} hp/lb</dd></div><div class="result-row"><dt>Empirical Constants</dt><dd>ET: 5.825, Trap: 234</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .weight-group { display: flex; gap: 0.5rem; }
+  .weight-group > *:first-child { flex: 1; }
+  .unit-select { padding: 0.625rem 0.75rem; font-size: 0.85rem; font-family: var(--font-sans); font-weight: 500; color: var(--text-primary); background: var(--bg-tertiary); border: 1px solid var(--border-secondary); border-radius: var(--radius-md); cursor: pointer; min-width: 100px; margin-bottom: 1rem; display: block; }
+  .unit-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .limitations strong { color: var(--error); }
+  @media (max-width: 480px) { .weight-group { flex-direction: column; } }
+</style>

@@ -1,0 +1,91 @@
+---
+// ResultCard.astro - Instrument panel result display
+interface Props {
+  primaryValue: string;
+  primaryLabel: string;
+  secondaryValues?: { label: string; value: string }[];
+  interpretation?: string;
+}
+const { primaryValue, primaryLabel, secondaryValues = [], interpretation } = Astro.props;
+---
+
+<div class="result-panel" role="status" aria-live="polite">
+  <div class="result-primary">
+    <span class="result-value">{primaryValue}</span>
+    <span class="result-label">{primaryLabel}</span>
+  </div>
+  {secondaryValues.length > 0 && (
+    <dl class="result-secondary">
+      {secondaryValues.map(item => (
+        <div class="result-row">
+          <dt>{item.label}</dt>
+          <dd>{item.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )}
+  {interpretation && <p class="result-interpretation">{interpretation}</p>}
+</div>
+
+<style>
+  .result-panel { padding: 0; }
+  .result-primary {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+  }
+  .result-value {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.2;
+    word-break: break-word;
+  }
+  .result-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-top: 0.375rem;
+  }
+  .result-secondary { margin-bottom: 1rem; }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-primary);
+    gap: 0.5rem;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-row dt {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .result-row dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    text-align: right;
+    word-break: break-word;
+  }
+  .result-interpretation {
+    padding: 1rem;
+    background: var(--accent-dim);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+</style>

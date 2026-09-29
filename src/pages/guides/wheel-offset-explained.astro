@@ -1,0 +1,93 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Wheel Offset Explained" description="Understanding wheel offset: positive, zero, negative, and how wheel width and offset interact to affect fitment.">
+  <article class="guide-page">
+    <header>
+      <h1>Wheel Offset Explained</h1>
+      <p class="guide-meta">Technical guide for wheel fitment decisions</p>
+    </header>
+    <section>
+      <h2>What Is Wheel Offset?</h2>
+      <p><strong>Offset (ET)</strong> is the distance from the wheel's hub mounting surface to the centerline of the wheel, measured in millimeters.</p>
+      <ul>
+        <li><strong>Positive offset (+ET):</strong> Mounting surface is toward the face of the wheel (street cars, FWD)</li>
+        <li><strong>Zero offset (ET0):</strong> Mounting surface aligns with wheel centerline (some RWD, older cars)</li>
+        <li><strong>Negative offset (−ET):</strong> Mounting surface is toward the back of the wheel (deep-dish, trucks, some RWD)</li>
+      </ul>
+      <p>Offset is stamped on the wheel as "ET" followed by a number (e.g., ET35, ET−12).</p>
+    </section>
+    <section>
+      <h2>How Width and Offset Work Together</h2>
+      <p>Offset alone doesn't determine fitment. <strong>Wheel width</strong> and <strong>offset</strong> together determine where the inner and outer edges sit relative to the hub.</p>
+      <p>The key measurements are:</p>
+      <ul>
+        <li><strong>Inner position</strong> = half-width + offset (distance toward suspension)</li>
+        <li><strong>Outer position</strong> = half-width − offset (distance toward fender)</li>
+      </ul>
+      <p>A wider wheel at the same offset moves <em>both</em> edges outward equally. A higher (more positive) offset at the same width moves the wheel inward (more inner clearance, less outer poke).</p>
+    </section>
+    <section>
+      <h2>Practical Effects</h2>
+      <table class="guide-table">
+        <thead><tr><th>Change</th><th>Inner Clearance</th><th>Outer Poke</th></tr></thead>
+        <tbody>
+          <tr><td>Wider wheel, same ET</td><td>Decreases (moves toward suspension)</td><td>Increases (moves toward fender)</td></tr>
+          <tr><td>Same width, more positive ET</td><td>Decreases</td><td>Decreases</td></tr>
+          <tr><td>Same width, more negative ET</td><td>Increases</td><td>Increases</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Common Scenarios</h2>
+      <h3>Plus-Sizing (Larger Diameter)</h3>
+      <p>When going to a larger wheel diameter, you typically also increase width. Use the calculator to check both inner and outer changes.</p>
+      <h3>Aftermarket Wheels on OEM Suspension</h3>
+      <p>OEM wheels often have high positive offset. Aftermarket wheels may have lower offset. Check inner clearance for strut/control arm interference.</p>
+      <h3>Spacers</h3>
+      <p>Spacers effectively reduce offset (make it more negative). A 10 mm spacer on an ET45 wheel = effective ET35.</p>
+    </section>
+    <section>
+      <h2>What This Calculator Does NOT Guarantee</h2>
+      <p>The <a href="/calculators/wheel-offset/">Wheel Offset Calculator</a> shows <strong>rim geometry only</strong>. It does not account for:</p>
+      <ul>
+        <li>Brake caliper shape and clearance</li>
+        <li>Suspension component geometry (struts, control arms, tie rods)</li>
+        <li>Tire sidewall bulge (tires are wider than the rim)</li>
+        <li>Fender lip clearance and roll</li>
+        <li>Hub bore diameter and centering rings</li>
+        <li>Wheel load rating</li>
+      </ul>
+      <p><strong>Always test-fit before purchasing.</strong></p>
+    </section>
+    <nav class="guide-nav">
+      <a href="/calculators/wheel-offset/" class="btn-primary">Use Wheel Offset Calculator</a>
+      <a href="/wheels-tires/" class="btn-secondary">Wheels & Tires Hub</a>
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .guide-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; line-height: 1.7; }
+  .guide-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .guide-meta { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+  .guide-page h2 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; padding-bottom: 0.375rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h3 { font-size: 0.95rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+  .guide-page p { margin: 0 0 0.75rem; color: var(--text-secondary); }
+  .guide-page ul { margin: 0 0 0.75rem 1.25rem; color: var(--text-secondary); }
+  .guide-page li { margin-bottom: 0.375rem; }
+  .guide-page strong { color: var(--text-primary); }
+  .guide-page a { color: var(--accent); }
+  .guide-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+  .guide-table th, .guide-table td { padding: 0.5rem 0.75rem; border: 1px solid var(--border-primary); text-align: left; }
+  .guide-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+  .guide-table tr:nth-child(even) td { background: var(--bg-secondary); }
+  .guide-nav { display: flex; gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg-primary); text-decoration: none; }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+</style>

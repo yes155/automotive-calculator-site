@@ -1,0 +1,128 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculateTireSize, validateTireSize, type TireSizeInput } from '../../lib/calculators/tireSize.ts';
+
+const url = new URL(Astro.url);
+const tireAWidth = parseFloat(url.searchParams.get('tireAWidth') || '225');
+const tireAAspect = parseFloat(url.searchParams.get('tireAAspect') || '45');
+const tireARim = parseFloat(url.searchParams.get('tireARim') || '17');
+const tireBWidth = parseFloat(url.searchParams.get('tireBWidth') || '235');
+const tireBAspect = parseFloat(url.searchParams.get('tireBAspect') || '40');
+const tireBRim = parseFloat(url.searchParams.get('tireBRim') || '18');
+const input: TireSizeInput = { tireAWidth, tireAAspect, tireARim, tireBWidth, tireBAspect, tireBRim };
+const validation = validateTireSize(input);
+const result = calculateTireSize(input);
+const canonical = '/calculators/tire-size/';
+---
+
+<Layout title="Tire Size Calculator" description="Compare two tire sizes: diameter, circumference, ground clearance change, and speedometer effect. Enter width, aspect ratio, and rim diameter for both tires." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Tire Size Calculator', url: '/calculators/tire-size/' }]}>
+  <CalculatorShell title="Tire Size Calculator" description="Compare tire dimensions and speedometer effect. Enter section width (mm), aspect ratio (%), and wheel diameter (inches) for both tires." calculatorId="tire-size">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="tire-size">
+      <fieldset>
+        <legend>Tire A (Current / Reference)</legend>
+        <NumberField id="tireAWidth" label="Section Width" unit="mm" value={tireAWidth} min={155} max={400} step={5} error={validation.errors.find(e => e.includes('Tire A width'))} placeholder="e.g., 225" />
+        <NumberField id="tireAAspect" label="Aspect Ratio" unit="%" value={tireAAspect} min={25} max={85} step={5} error={validation.errors.find(e => e.includes('Tire A aspect'))} placeholder="e.g., 45" />
+        <NumberField id="tireARim" label="Rim Diameter" unit="inches" value={tireARim} min={13} max={24} step={1} error={validation.errors.find(e => e.includes('Tire A rim'))} placeholder="e.g., 17" />
+      </fieldset>
+      <fieldset>
+        <legend>Tire B (Proposed / Comparison)</legend>
+        <NumberField id="tireBWidth" label="Section Width" unit="mm" value={tireBWidth} min={155} max={400} step={5} error={validation.errors.find(e => e.includes('Tire B width'))} placeholder="e.g., 235" />
+        <NumberField id="tireBAspect" label="Aspect Ratio" unit="%" value={tireBAspect} min={25} max={85} step={5} error={validation.errors.find(e => e.includes('Tire B aspect'))} placeholder="e.g., 40" />
+        <NumberField id="tireBRim" label="Rim Diameter" unit="inches" value={tireBRim} min={13} max={24} step={1} error={validation.errors.find(e => e.includes('Tire B rim'))} placeholder="e.g., 18" />
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/tire-size/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+    <ResultCard slot="results" primaryValue={`${result.comparison.diameterDiffMm > 0 ? '+' : ''}${result.comparison.diameterDiffMm.toFixed(1)} mm (${result.comparison.diameterDiffPct > 0 ? '+' : ''}${result.comparison.diameterDiffPct.toFixed(1)}%)`} primaryLabel="Diameter Difference" secondaryValues={[
+      { label: 'Tire A Diameter', value: `${result.tireA.diameterIn.toFixed(2)} in (${result.tireA.diameterMm.toFixed(1)} mm)` },
+      { label: 'Tire B Diameter', value: `${result.tireB.diameterIn.toFixed(2)} in (${result.tireB.diameterMm.toFixed(1)} mm)` },
+      { label: 'Circumference Diff', value: `${result.comparison.circumferenceDiffMm > 0 ? '+' : ''}${result.comparison.circumferenceDiffMm.toFixed(1)} mm (${result.comparison.circumferenceDiffPct > 0 ? '+' : ''}${result.comparison.circumferenceDiffPct.toFixed(1)}%)` },
+      { label: 'Ground Clearance', value: `${result.comparison.groundClearanceChangeMm > 0 ? '+' : ''}${result.comparison.groundClearanceChangeMm.toFixed(1)} mm` },
+      { label: 'Speedometer at 60', value: `${result.comparison.speedometerReadingAt60.toFixed(1)} MPH actual` },
+      { label: 'Speedometer Error', value: `${result.comparison.speedometerEffectPct > 0 ? '+' : ''}${result.comparison.speedometerEffectPct.toFixed(1)}%` },
+    ]} interpretation={result.interpretation} />
+    <FormulaBlock slot="explanation" title="Formula" formula={`sidewall_mm = section_width_mm × aspect_ratio / 100\ndiameter_mm = 2 × sidewall_mm + rim_in × 25.4\ncircumference_mm = π × diameter_mm\nrevs_per_mile = 63360 / diameter_in\ndiameter_diff_mm = diameter_B - diameter_A\ndiameter_diff_pct = (diameter_diff / diameter_A) × 100\nground_clearance_change = diameter_diff / 2\nactual_speed = indicated_speed × diameter_A / diameter_B\nspeedometer_error_pct = (diameter_B / diameter_A - 1) × 100`} variables={[
+      { symbol: 'section_width_mm', name: 'Tire section width', unit: 'mm' },
+      { symbol: 'aspect_ratio', name: 'Aspect ratio (sidewall/width)', unit: '%' },
+      { symbol: 'rim_in', name: 'Wheel/rim diameter', unit: 'inches' },
+      { symbol: 'sidewall_mm', name: 'Sidewall height', unit: 'mm' },
+      { symbol: 'diameter_mm', name: 'Overall tire diameter', unit: 'mm' },
+      { symbol: 'circumference_mm', name: 'Tire circumference', unit: 'mm' },
+    ]} notes={[
+      'Calculations use nominal tire dimensions — actual mounted dimensions vary by tire model, rim width, inflation pressure, and load.',
+      'Ground clearance change = diameter difference / 2 (radius change).',
+      'Speedometer error: positive % means speedometer reads SLOW (actual speed > indicated).',
+      'At 60 MPH indicated: actual = 60 × (diameter_A / diameter_B).',
+      'Revs/mile useful for transmission/gearing calculations.',
+    ]} />
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> 225/45R17 vs 235/40R18 (common plus-one sizing)</p>
+      <ul>
+        <li><strong>Tire A:</strong> 225 × 0.45 = 101.25 mm sidewall; 2×101.25 + 17×25.4 = <strong>634.3 mm (24.97″)</strong></li>
+        <li><strong>Tire B:</strong> 235 × 0.40 = 94.0 mm sidewall; 2×94.0 + 18×25.4 = <strong>645.2 mm (25.40″)</strong></li>
+        <li><strong>Difference:</strong> +10.9 mm (+1.7%) diameter; +5.5 mm ground clearance</li>
+        <li><strong>Speedometer:</strong> At 60 MPH indicated, actual = 60 × 634.3/645.2 = <strong>59.0 MPH</strong> (reads 1.7% slow)</li>
+      </ul>
+    </div>
+    <div slot="limitations" class="limitations">
+      <p><strong>Important limitations:</strong></p>
+      <ul>
+        <li><strong>Nominal vs actual:</strong> Stated dimensions can differ from measured by ±2–3% due to tire model, construction, rim width, pressure, load, and wear.</li>
+        <li><strong>Section width</strong> is measured on design rim width — actual width changes with rim width.</li>
+        <li><strong>Aspect ratio</strong> is calculated at design load and pressure.</li>
+        <li><strong>Speedometer calibration</strong> assumes original tire was correct — if already off, error compounds.</li>
+        <li><strong>Does not check:</strong> fender clearance, suspension travel, brake caliper clearance, load rating, speed rating.</li>
+        <li>Always verify fitment with actual mounted measurements before purchasing.</li>
+      </ul>
+    </div>
+    <RelatedTools slot="related" tools={[
+      { title: 'Wheel Offset Calculator', href: '/calculators/wheel-offset/', description: 'Check inner/outer clearance when changing wheels' },
+      { title: 'How to Read Tire Size', href: '/guides/how-to-read-tire-size/', description: 'Decoding P-metric, LT, and Euro-metric codes (Phase 2)' },
+      { title: 'Tire Diameter vs Wheel Size', href: '/guides/tire-diameter-vs-wheel-size/', description: 'Plus-sizing, aspect ratio, ride quality (Phase 2)' },
+      { title: 'Wheels & Tires Hub', href: '/wheels-tires/', description: 'All wheel and tire tools' },
+    ]} />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculateTireSize } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="tire-size"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculateTireSize(parseFloat(fd.get('tireAWidth')), parseFloat(fd.get('tireAAspect')), parseFloat(fd.get('tireARim')), parseFloat(fd.get('tireBWidth')), parseFloat(fd.get('tireBAspect')), parseFloat(fd.get('tireBRim')));
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.comparison.diameterDiffMm > 0 ? '+' : ''}${r.comparison.diameterDiffMm.toFixed(1)} mm (${r.comparison.diameterDiffPct > 0 ? '+' : ''}${r.comparison.diameterDiffPct.toFixed(1)}%)</span><span class="result-label">Diameter Difference</span></div><dl class="result-secondary"><div class="result-row"><dt>Tire A Diameter</dt><dd>${r.tireA.diameterIn.toFixed(2)} in (${r.tireA.diameterMm.toFixed(1)} mm)</dd></div><div class="result-row"><dt>Tire B Diameter</dt><dd>${r.tireB.diameterIn.toFixed(2)} in (${r.tireB.diameterMm.toFixed(1)} mm)</dd></div><div class="result-row"><dt>Circumference Diff</dt><dd>${r.comparison.circumferenceDiffMm > 0 ? '+' : ''}${r.comparison.circumferenceDiffMm.toFixed(1)} mm (${r.comparison.circumferenceDiffPct > 0 ? '+' : ''}${r.comparison.circumferenceDiffPct.toFixed(1)}%)</dd></div><div class="result-row"><dt>Ground Clearance</dt><dd>${r.comparison.groundClearanceChangeMm > 0 ? '+' : ''}${r.comparison.groundClearanceChangeMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>Speedometer at 60</dt><dd>${r.comparison.speedometerReadingAt60.toFixed(1)} MPH actual</dd></div><div class="result-row"><dt>Speedometer Error</dt><dd>${r.comparison.speedometerEffectPct > 0 ? '+' : ''}${r.comparison.speedometerEffectPct.toFixed(1)}%</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .limitations strong { color: var(--error); }
+</style>

@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+---
+
+<Layout title="Performance Calculators" description="Performance calculators for power-to-weight, horsepower from torque/RPM, and quarter-mile estimates.">
+  <section class="hub-page">
+    <header>
+      <h1>Performance</h1>
+      <p>Tools for power-to-weight ratios, horsepower calculation, and quarter-mile estimation.</p>
+    </header>
+    <RelatedTools tools={[
+      { title: 'Power-to-Weight Ratio', href: '/calculators/power-to-weight/', description: 'hp/lb, hp/ton, kW/kg, W/kg + inverse ratios' },
+      { title: 'Horsepower Calculator', href: '/calculators/horsepower/', description: 'Torque × RPM → hp/kW (lb-ft or N·m)' },
+      { title: 'Quarter Mile Estimator', href: '/calculators/quarter-mile/', description: 'Empirical ET and trap speed from weight and power' },
+    ]} />
+    <div class="hub-section">
+      <h2>Related Guides</h2>
+      <RelatedTools tools={[
+        { title: 'Horsepower vs Torque', href: '/guides/horsepower-vs-torque/', description: 'The relationship, 5252 crossover, and driving implications' },
+      ]} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hub-page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .hub-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .hub-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .hub-page header p { color: var(--text-secondary); font-size: 0.95rem; }
+  .hub-section { margin-top: 2rem; }
+  .hub-section h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-primary); }
+</style>

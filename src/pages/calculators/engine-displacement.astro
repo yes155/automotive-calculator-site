@@ -1,0 +1,121 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculateEngineDisplacement, validateEngineDisplacement, type EngineDisplacementInput } from '../../lib/calculators/engineDisplacement.ts';
+
+const url = new URL(Astro.url);
+const bore = parseFloat(url.searchParams.get('bore') || '86');
+const stroke = parseFloat(url.searchParams.get('stroke') || '86');
+const cylinders = parseInt(url.searchParams.get('cylinders') || '4');
+const unitSystem = (url.searchParams.get('unitSystem') as 'mm' | 'in') || 'mm';
+const input: EngineDisplacementInput = { bore, stroke, cylinders, unitSystem };
+const validation = validateEngineDisplacement(input);
+const result = calculateEngineDisplacement(input);
+const canonical = '/calculators/engine-displacement/';
+---
+
+<Layout title="Engine Displacement Calculator" description="Calculate engine displacement in cc, liters, and cubic inches from bore, stroke, and cylinder count. Also shows bore/stroke ratio and geometry classification." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Engine Displacement Calculator', url: '/calculators/engine-displacement/' }]}>
+  <CalculatorShell title="Engine Displacement Calculator" description="Calculate displacement from bore, stroke, and cylinder count. Results in cc, liters, cubic inches, per-cylinder volume, and bore/stroke ratio with geometry classification." calculatorId="engine-displacement">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="engine-displacement">
+      <fieldset>
+        <legend>Engine Geometry</legend>
+        <NumberField id="bore" label="Bore" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={bore} min={50} max={200} step={unitSystem === 'mm' ? 0.1 : 0.001} error={validation.errors.find(e => e.includes('Bore'))} placeholder={unitSystem === 'mm' ? 'e.g., 86' : 'e.g., 3.386'} />
+        <NumberField id="stroke" label="Stroke" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={stroke} min={30} max={200} step={unitSystem === 'mm' ? 0.1 : 0.001} error={validation.errors.find(e => e.includes('Stroke'))} placeholder={unitSystem === 'mm' ? 'e.g., 86' : 'e.g., 3.386'} />
+        <NumberField id="cylinders" label="Cylinders" value={cylinders} min={1} max={16} step={1} error={validation.errors.find(e => e.includes('Cylinders'))} placeholder="e.g., 4" />
+      </fieldset>
+      <div class="form-actions">
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>mm</span></label>
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>inches</span></label>
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/engine-displacement/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+    <ResultCard slot="results" primaryValue={`${result.totalDisplacementCc.toFixed(0)} cc (${result.totalDisplacementL.toFixed(2)} L, ${result.totalDisplacementCi.toFixed(1)} cu in)`} primaryLabel="Total Displacement" secondaryValues={[
+      { label: 'Per Cylinder', value: `${result.perCylinderCc.toFixed(1)} cc` },
+      { label: 'Bore/Stroke Ratio', value: result.boreStrokeRatio.toFixed(2) },
+      { label: 'Geometry', value: result.geometryDescription },
+    ]} interpretation={result.interpretation} />
+    <FormulaBlock slot="explanation" title="Formula" formula={`V_cylinder = π/4 × bore² × stroke / 1000\nTotal = V_cylinder × cylinders\nBore/Stroke Ratio = bore / stroke`} variables={[
+      { symbol: 'bore', name: 'Cylinder bore', unit: 'mm or in' },
+      { symbol: 'stroke', name: 'Piston stroke', unit: 'mm or in' },
+      { symbol: 'cylinders', name: 'Number of cylinders' },
+      { symbol: 'V_cylinder', name: 'Displacement per cylinder', unit: 'cc' },
+    ]} notes={[
+      'Bore/stroke ratio is descriptive geometry only — not a performance predictor.',
+      'Oversquare (>1.05): bore > stroke, favors high-RPM power.',
+      'Square (~1.0): bore ≈ stroke, balanced characteristics.',
+      'Undersquare (<0.95): stroke > bore, favors low-end torque.',
+      'Also handles "bore stroke calculator" search intent.',
+    ]} />
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> 86 mm bore, 86 mm stroke, 4 cylinders.</p>
+      <ul>
+        <li>Per cylinder: π/4 × 86² × 86 / 1000 = <strong>499.6 cc</strong></li>
+        <li>Total: 499.6 × 4 = <strong>1,998 cc (2.00 L, 121.9 cu in)</strong></li>
+        <li>Bore/stroke: 86/86 = <strong>1.00 (Square)</strong></li>
+      </ul>
+      <p><strong>Example 2:</strong> 4.0″ bore, 3.0″ stroke, 8 cylinders (classic V8).</p>
+      <ul>
+        <li>Per cylinder: π/4 × 101.6² × 76.2 / 1000 = <strong>617.8 cc</strong></li>
+        <li>Total: 617.8 × 8 = <strong>4,942 cc (4.94 L, 301.6 cu in)</strong></li>
+        <li>Bore/stroke: 101.6/76.2 = <strong>1.33 (Oversquare)</strong></li>
+      </ul>
+    </div>
+    <div slot="limitations" class="limitations">
+      <p><strong>Limitations:</strong></p>
+      <ul>
+        <li>Bore/stroke ratio describes geometry only — does not determine power/torque characteristics alone</li>
+        <li>Assumes perfect cylindrical bores (no taper, out-of-round)</li>
+        <li>Does not account for combustion chamber volume (see Compression Ratio Calculator)</li>
+        <li>Nominal dimensions may differ from actual machined dimensions</li>
+      </ul>
+    </div>
+    <RelatedTools slot="related" tools={[
+      { title: 'Compression Ratio Calculator', href: '/calculators/compression-ratio/', description: 'Static CR with component breakdown' },
+      { title: 'Bore vs Stroke', href: '/guides/bore-vs-stroke/', description: 'Oversquare, square, undersquare explained' },
+      { title: 'Engine Hub', href: '/engine/', description: 'All engine geometry tools' },
+    ]} />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculateEngineDisplacement } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="engine-displacement"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculateEngineDisplacement(parseFloat(fd.get('bore')), parseFloat(fd.get('stroke')), parseInt(fd.get('cylinders')), fd.get('unitSystem') as 'mm' | 'in');
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.totalDisplacementCc.toFixed(0)} cc (${r.totalDisplacementL.toFixed(2)} L, ${r.totalDisplacementCi.toFixed(1)} cu in)</span><span class="result-label">Total Displacement</span></div><dl class="result-secondary"><div class="result-row"><dt>Per Cylinder</dt><dd>${r.perCylinderCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Bore/Stroke Ratio</dt><dd>${r.boreStrokeRatio.toFixed(2)}</dd></div><div class="result-row"><dt>Geometry</dt><dd>${r.geometryDescription}</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .form-actions { display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); flex-wrap: wrap; }
+  .unit-toggle { display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer; font-size: 0.8rem; color: var(--text-secondary); }
+  .unit-toggle input { accent-color: var(--accent); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .limitations em { color: var(--error); }
+</style>

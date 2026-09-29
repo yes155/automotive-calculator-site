@@ -1,0 +1,105 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Horsepower vs Torque" description="Understanding the relationship between horsepower and torque, the 5252 RPM crossover, and what each means for driving.">
+  <article class="guide-page">
+    <header>
+      <h1>Horsepower vs Torque</h1>
+      <p class="guide-meta">The relationship, the 5252 crossover, and what matters for driving</p>
+    </header>
+    <section>
+      <h2>Definitions</h2>
+      <ul>
+        <li><strong>Torque:</strong> Rotational force (lb-ft or N·m). What you feel as "pull" or acceleration force at the wheels.</li>
+        <li><strong>Horsepower:</strong> Rate of doing work (hp or kW). Torque × RPM ÷ 5252. Determines top speed and how fast you can accelerate at speed.</li>
+      </ul>
+      <p class="formula-inline">hp = (Torque_lbft × RPM) / 5252.113</p>
+      <p class="formula-inline">kW = (Torque_Nm × RPM) / 9549.297</p>
+    </section>
+    <section>
+      <h2>The 5252 RPM Crossover</h2>
+      <p>At exactly <strong>5,252 RPM</strong>, the numerical value of torque (in lb-ft) equals the numerical value of horsepower.</p>
+      <ul>
+        <li>Below 5,252 RPM: Torque number > Horsepower number</li>
+        <li>At 5,252 RPM: Torque = Horsepower</li>
+        <li>Above 5,252 RPM: Horsepower number > Torque number</li>
+      </ul>
+      <p>This is a mathematical artifact of the definition of horsepower (33,000 ft-lb/min ÷ 2π), not a physical phenomenon.</p>
+    </section>
+    <section>
+      <h2>What Matters for Driving</h2>
+      <h3>Acceleration at Any Speed</h3>
+      <p><strong>Wheel torque determines acceleration.</strong> Wheel torque = Engine torque × Gear ratio × Final drive × Efficiency.</p>
+      <p>At a given vehicle speed, the gear you're in determines engine RPM. More horsepower means you can stay in a lower gear (higher gear ratio multiplier) at that speed, producing more wheel torque.</p>
+      <h3>Horsepower = Top Speed Potential</h3>
+      <p>To overcome aero drag at high speed, you need power. Top speed is fundamentally limited by horsepower, not torque.</p>
+      <h3>Torque = Low-Speed Grunt</h3>
+      <p>High torque at low RPM means strong acceleration from a stop or low speed without downshifting. This is why turbo diesels and big V8s feel "torquey" around town.</p>
+    </section>
+    <section>
+      <h2>Common Misconceptions</h2>
+      <table class="guide-table">
+        <thead><tr><th>Myth</th><th>Reality</th></tr></thead>
+        <tbody>
+          <tr><td>"Torque wins races, horsepower sells cars"</td><td>Both matter. Horsepower determines how fast you can go; torque determines how quickly you get there <em>in a given gear</em>.</td></tr>
+          <tr><td>"Electric motors have infinite torque"</td><td>Electric motors have max torque at 0 RPM, but torque drops as RPM increases. Power is still the limit.</td></tr>
+          <tr><td>"Peak torque RPM is best for acceleration"</td><td>Best acceleration in a gear is at peak torque. Best acceleration <em>at a given speed</em> is at peak power (allows lower gear).</td></tr>
+          <tr><td>"High torque = high horsepower"</td><td>Only if torque holds to high RPM. A 500 lb-ft diesel at 2,000 RPM = 190 hp. A 300 lb-ft sport bike at 12,000 RPM = 686 hp.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Practical Example</h2>
+      <p><strong>Engine A:</strong> 400 hp @ 7,000 RPM, 300 lb-ft @ 5,000 RPM</p>
+      <p><strong>Engine B:</strong> 300 hp @ 5,000 RPM, 400 lb-ft @ 3,000 RPM</p>
+      <p>At 60 mph in 3rd gear (say 4,000 RPM):</p>
+      <ul>
+        <li>Engine A makes ~280 lb-ft → 280 × gear ratio = wheel torque</li>
+        <li>Engine B makes ~380 lb-ft → 380 × gear ratio = wheel torque</li>
+      </ul>
+      <p>Engine B accelerates harder <em>in that gear</em>. But Engine A can drop to 2nd gear at 60 mph (6,000 RPM) making 350 lb-ft × lower gear ratio = MORE wheel torque.</p>
+      <p><strong>Horsepower lets you use gear multiplication.</strong> For further reading, see <a href="https://www.sae.org/" target="_blank" rel="noopener">SAE International</a> technical papers on engine performance metrics and <a href="https://www.epa.gov/" target="_blank" rel="noopener">EPA</a> vehicle dynamics standards.</p>
+    </section>
+    <section>
+      <h2>Key Takeaways</h2>
+      <ul>
+        <li>Horsepower and torque are mathematically linked — not separate things</li>
+        <li>5252 RPM is where the numbers cross (lb-ft vs hp)</li>
+        <li>Wheel torque (after gearing) determines acceleration</li>
+        <li>Horsepower determines top speed and gear flexibility</li>
+        <li>Peak power RPM matters more than peak torque RPM for maximum acceleration at speed</li>
+        <li>Area under the curve (powerband) matters more than peak numbers</li>
+      </ul>
+    </section>
+    <nav class="guide-nav">
+      <a href="/calculators/horsepower/" class="btn-primary">Horsepower Calculator</a>
+      <a href="/performance/" class="btn-secondary">Performance Hub</a>
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .guide-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; line-height: 1.7; }
+  .guide-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .guide-meta { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+  .guide-page h2 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; padding-bottom: 0.375rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h3 { font-size: 0.95rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+  .guide-page p { margin: 0 0 0.75rem; color: var(--text-secondary); }
+  .guide-page ul { margin: 0 0 0.75rem 1.25rem; color: var(--text-secondary); }
+  .guide-page li { margin-bottom: 0.375rem; }
+  .guide-page strong { color: var(--text-primary); }
+  .guide-page a { color: var(--accent); }
+  .formula-inline { font-family: var(--font-mono); background: var(--bg-tertiary); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: block; margin: 0.75rem 0; font-size: 0.9rem; color: var(--accent); }
+  .guide-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.8rem; }
+  .guide-table th, .guide-table td { padding: 0.5rem 0.75rem; border: 1px solid var(--border-primary); text-align: left; }
+  .guide-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+  .guide-table tr:nth-child(even) td { background: var(--bg-secondary); }
+  .guide-nav { display: flex; gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg-primary); text-decoration: none; }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+</style>

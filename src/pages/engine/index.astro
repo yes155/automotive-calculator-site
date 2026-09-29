@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+---
+
+<Layout title="Engine Geometry Calculators" description="Engine calculators for compression ratio, displacement, and bore/stroke geometry.">
+  <section class="hub-page">
+    <header>
+      <h1>Engine Geometry</h1>
+      <p>Calculators for static compression ratio, displacement, and bore/stroke analysis.</p>
+    </header>
+    <RelatedTools tools={[
+      { title: 'Compression Ratio Calculator', href: '/calculators/compression-ratio/', description: 'Static CR with chamber, gasket, deck, dish/dome breakdown' },
+      { title: 'Engine Displacement Calculator', href: '/calculators/engine-displacement/', description: 'Bore, stroke, cylinders → cc/L/ci + bore/stroke ratio' },
+    ]} />
+    <div class="hub-section">
+      <h2>Related Guides</h2>
+      <RelatedTools tools={[
+        { title: 'Compression Ratio Explained', href: '/guides/compression-ratio-explained/', description: 'Static vs dynamic CR, component volumes, octane considerations' },
+        { title: 'Bore vs Stroke', href: '/guides/bore-vs-stroke/', description: 'Oversquare, square, undersquare geometries explained' },
+      ]} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hub-page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .hub-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .hub-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .hub-page header p { color: var(--text-secondary); font-size: 0.95rem; }
+  .hub-section { margin-top: 2rem; }
+  .hub-section h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-primary); }
+</style>

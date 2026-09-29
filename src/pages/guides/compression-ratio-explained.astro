@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Compression Ratio Explained" description="Understanding static vs dynamic compression ratio, component volumes, and octane considerations.">
+  <article class="guide-page">
+    <header>
+      <h1>Compression Ratio Explained</h1>
+      <p class="guide-meta">Static compression ratio, component breakdown, and what it means for your build</p>
+    </header>
+    <section>
+      <h2>What Is Compression Ratio?</h2>
+      <p><strong>Compression ratio (CR)</strong> is the ratio of the cylinder volume at bottom dead center (BDC) to the volume at top dead center (TDC):</p>
+      <p class="formula-inline">CR = (Swept Volume + Clearance Volume) / Clearance Volume</p>
+      <p>Expressed as a ratio (e.g., 10.5:1), it indicates how much the air-fuel mixture is compressed before ignition.</p>
+    </section>
+    <section>
+      <h2>Static vs Dynamic Compression Ratio</h2>
+      <h3>Static Compression Ratio</h3>
+      <p>Calculated from physical dimensions only — bore, stroke, chamber volume, piston shape, gasket, and deck clearance. This is what the <a href="/calculators/compression-ratio/">Compression Ratio Calculator</a> computes.</p>
+      <h3>Dynamic Compression Ratio</h3>
+      <p>Accounts for intake valve closing (IVC) timing. Since the intake valve closes after BDC, the effective compression stroke starts later, reducing the actual compression ratio. Dynamic CR is always lower than static CR.</p>
+      <p>Dynamic CR depends on camshaft profile (duration, LSA, ICL) and is more relevant for octane requirement and detonation resistance.</p>
+    </section>
+    <section>
+      <h2>Component Volumes</h2>
+      <p>Clearance volume (volume at TDC) consists of:</p>
+      <ul>
+        <li><strong>Combustion chamber</strong> — cylinder head chamber volume (cc)</li>
+        <li><strong>Head gasket</strong> — compressed gasket volume (bore × thickness)</li>
+        <li><strong>Deck clearance</strong> — volume between piston crown and block deck at TDC</li>
+        <li><strong>Piston dish</strong> — adds volume (positive number)</li>
+        <li><strong>Piston dome</strong> — subtracts volume (reduces clearance volume)</li>
+      </ul>
+      <p>Total clearance volume = Chamber + Gasket + Deck + Dish − Dome</p>
+    </section>
+    <section>
+      <h2>Compression Ratio and Octane</h2>
+      <p>Higher compression ratios require higher octane fuel to prevent detonation (knock). Rough guidelines for pump gasoline on typical street engines:</p>
+      <table class="guide-table">
+        <thead><tr><th>Static CR</th><th>Recommended Min Octane (R+M/2)</th></tr></thead>
+        <tbody>
+          <tr><td>≤ 9.5:1</td><td>87 (Regular)</td></tr>
+          <tr><td>9.5–10.5:1</td><td>91 (Premium)</td></tr>
+          <tr><td>10.5–11.5:1</td><td>93 (Premium)</td></tr>
+          <tr><td>> 11.5:1</td><td>Race fuel / E85 required</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Caveats:</strong> These are rough guidelines. Actual octane requirement depends on dynamic CR, combustion chamber design, quench, ignition timing, cooling efficiency, ambient conditions, and tune. Modern engines with knock sensors and direct injection can run higher static CR on lower octane. For authoritative guidance, refer to <a href="https://www.sae.org/" target="_blank" rel="noopener">SAE International</a> standards and <a href="https://www.epa.gov/" target="_blank" rel="noopener">EPA</a> fuel economy guidelines.</p>
+    </section>
+    <section>
+      <h2>Key Takeaways</h2>
+      <ul>
+        <li>Static CR is a geometric calculation — not the whole story for detonation</li>
+        <li>Dynamic CR (affected by cam timing) is more relevant for octane needs</li>
+        <li>Component volumes matter: chamber, gasket, deck, piston shape</li>
+        <li>Quench (deck + gasket) affects detonation resistance</li>
+        <li>Always verify with dynamic CR calculation for cam selection</li>
+      </ul>
+    </section>
+    <nav class="guide-nav">
+      <a href="/calculators/compression-ratio/" class="btn-primary">Use Compression Ratio Calculator</a>
+      <a href="/engine/" class="btn-secondary">Engine Hub</a>
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .guide-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; line-height: 1.7; }
+  .guide-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .guide-meta { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+  .guide-page h2 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; padding-bottom: 0.375rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h3 { font-size: 0.95rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+  .guide-page p { margin: 0 0 0.75rem; color: var(--text-secondary); }
+  .guide-page ul { margin: 0 0 0.75rem 1.25rem; color: var(--text-secondary); }
+  .guide-page li { margin-bottom: 0.375rem; }
+  .guide-page strong { color: var(--text-primary); }
+  .guide-page a { color: var(--accent); }
+  .formula-inline { font-family: var(--font-mono); background: var(--bg-tertiary); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: block; margin: 0.75rem 0; font-size: 0.9rem; color: var(--accent); }
+  .guide-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+  .guide-table th, .guide-table td { padding: 0.5rem 0.75rem; border: 1px solid var(--border-primary); text-align: left; }
+  .guide-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+  .guide-table tr:nth-child(even) td { background: var(--bg-secondary); }
+  .guide-nav { display: flex; gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg-primary); text-decoration: none; }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+</style>

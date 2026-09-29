@@ -1,0 +1,166 @@
+---
+// CalculatorShell.astro - Instrument panel wrapper with client-side calculation
+interface Props {
+  title: string;
+  description: string;
+  calculatorId: string;
+}
+const { title, description, calculatorId } = Astro.props;
+---
+
+<article class="calculator-page" data-calculator={calculatorId}>
+  <header class="calc-header">
+    <div class="calc-header-text">
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </div>
+    <div class="calc-header-meta">
+      <span class="calc-id">{calculatorId}</span>
+    </div>
+  </header>
+
+  <div class="calc-body">
+    <section class="calc-inputs" aria-labelledby="inputs-heading">
+      <h2 id="inputs-heading" class="visually-hidden">Calculator Inputs</h2>
+      <slot name="inputs" />
+    </section>
+    <aside class="calc-results" aria-live="polite" aria-labelledby="results-heading">
+      <h2 id="results-heading" class="visually-hidden">Results</h2>
+      <slot name="results" />
+    </aside>
+  </div>
+
+  <section class="calc-section" aria-labelledby="explanation-heading">
+    <h2 id="explanation-heading">Formula & Method</h2>
+    <slot name="explanation" />
+  </section>
+
+  <section class="calc-section" aria-labelledby="example-heading">
+    <h2 id="example-heading">Worked Example</h2>
+    <slot name="example" />
+  </section>
+
+  <section class="calc-section calc-limitations" aria-labelledby="limitations-heading">
+    <h2 id="limitations-heading">Limitations</h2>
+    <slot name="limitations" />
+  </section>
+
+  <section class="calc-section" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related Tools</h2>
+    <slot name="related" />
+  </section>
+</article>
+
+<script>
+  document.querySelectorAll('form[data-calculator]').forEach(form => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const calculatorId = form.dataset.calculator;
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      formData.forEach((value, key) => params.append(key, value));
+      window.location.href = `${window.location.pathname}?${params.toString()}`;
+    });
+  });
+</script>
+
+<style>
+  .calculator-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .calc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-primary);
+  }
+
+  .calc-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .calc-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 65ch;
+    margin: 0;
+  }
+
+  .calc-id {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: var(--bg-tertiary);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-primary);
+    white-space: nowrap;
+  }
+
+  .calc-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .calc-body {
+      grid-template-columns: 1fr 380px;
+    }
+  }
+
+  .calc-inputs {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+  }
+
+  .calc-results {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    position: sticky;
+    top: 72px;
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+  }
+
+  .calc-section {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .calc-section h2 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  .calc-limitations {
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .calc-limitations h2 {
+    color: var(--error);
+  }
+</style>

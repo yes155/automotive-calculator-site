@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+---
+
+<Layout title="All Calculators" description="Browse all automotive calculators: wheels & tires, engine geometry, performance, and fueling tools.">
+  <section class="hub-page">
+    <header>
+      <h1>All Calculators</h1>
+      <p>8 precision tools for automotive calculations. Each includes formula, worked example, and limitations.</p>
+    </header>
+    <div class="hub-section">
+      <h2>Wheels & Tires</h2>
+      <RelatedTools tools={[
+        { title: 'Wheel Offset Calculator', href: '/calculators/wheel-offset/', description: 'Compare inner clearance and outer poke changes' },
+        { title: 'Tire Size Calculator', href: '/calculators/tire-size/', description: 'Compare dimensions and speedometer effect' },
+      ]} />
+    </div>
+    <div class="hub-section">
+      <h2>Engine Geometry</h2>
+      <RelatedTools tools={[
+        { title: 'Compression Ratio Calculator', href: '/calculators/compression-ratio/', description: 'Static CR with component volume breakdown' },
+        { title: 'Engine Displacement Calculator', href: '/calculators/engine-displacement/', description: 'Bore, stroke, cylinders → cc/L/ci + bore/stroke ratio' },
+      ]} />
+    </div>
+    <div class="hub-section">
+      <h2>Performance</h2>
+      <RelatedTools tools={[
+        { title: 'Power-to-Weight Ratio', href: '/calculators/power-to-weight/', description: 'hp/lb, hp/ton, kW/kg, W/kg + inverse ratios' },
+        { title: 'Horsepower Calculator', href: '/calculators/horsepower/', description: 'Torque × RPM → hp/kW (lb-ft or N·m)' },
+        { title: 'Quarter Mile Estimator', href: '/calculators/quarter-mile/', description: 'Empirical ET and trap speed from weight and power' },
+      ]} />
+    </div>
+    <div class="hub-section">
+      <h2>Fueling</h2>
+      <RelatedTools tools={[
+        { title: 'Fuel Injector Calculator', href: '/calculators/fuel-injector/', description: 'lb/hr and cc/min per injector from HP, BSFC, duty cycle' },
+      ]} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hub-page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .hub-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .hub-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .hub-page header p { color: var(--text-secondary); font-size: 0.95rem; max-width: 65ch; margin: 0; }
+  .hub-section { margin-bottom: 2rem; }
+  .hub-section h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-primary); }
+</style>

@@ -1,0 +1,138 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculateCompressionRatio, validateCompressionRatio, type CompressionRatioInput } from '../../lib/calculators/compressionRatio.ts';
+
+const url = new URL(Astro.url);
+const bore = parseFloat(url.searchParams.get('bore') || '86');
+const stroke = parseFloat(url.searchParams.get('stroke') || '86');
+const chamberCc = parseFloat(url.searchParams.get('chamberCc') || '45');
+const pistonDishCc = parseFloat(url.searchParams.get('pistonDishCc') || '5');
+const pistonDomeCc = parseFloat(url.searchParams.get('pistonDomeCc') || '0');
+const gasketBore = parseFloat(url.searchParams.get('gasketBore') || '87');
+const gasketThickness = parseFloat(url.searchParams.get('gasketThickness') || '1.2');
+const deckClearance = parseFloat(url.searchParams.get('deckClearance') || '0.5');
+const unitSystem = (url.searchParams.get('unitSystem') as 'mm' | 'in') || 'mm';
+
+const input: CompressionRatioInput = { bore, stroke, chamberCc, pistonDishCc, pistonDomeCc, gasketBore, gasketThickness, deckClearance, unitSystem };
+const validation = validateCompressionRatio(input);
+const result = calculateCompressionRatio(input);
+const canonical = '/calculators/compression-ratio/';
+---
+
+<Layout title="Compression Ratio Calculator" description="Calculate static compression ratio from bore, stroke, chamber volume, piston dish/dome, head gasket, and deck clearance." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Compression Ratio Calculator', url: '/calculators/compression-ratio/' }]}>
+  <CalculatorShell title="Compression Ratio Calculator" description="Calculate static compression ratio with component volume breakdown. Enter bore, stroke, combustion chamber volume, piston dish/dome volumes, head gasket specs, and deck clearance." calculatorId="compression-ratio">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="compression-ratio">
+      <fieldset>
+        <legend>Engine Geometry</legend>
+        <NumberField id="bore" label="Bore" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={bore} min={50} max={150} step={unitSystem === 'mm' ? 0.1 : 0.001} error={validation.errors.find(e => e.includes('Bore'))} placeholder={unitSystem === 'mm' ? 'e.g., 86' : 'e.g., 3.386'} />
+        <NumberField id="stroke" label="Stroke" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={stroke} min={30} max={150} step={unitSystem === 'mm' ? 0.1 : 0.001} error={validation.errors.find(e => e.includes('Stroke'))} placeholder={unitSystem === 'mm' ? 'e.g., 86' : 'e.g., 3.386'} />
+      </fieldset>
+      <fieldset>
+        <legend>Volumes (cc)</legend>
+        <NumberField id="chamberCc" label="Combustion Chamber" value={chamberCc} min={1} max={200} step={0.1} error={validation.errors.find(e => e.includes('Chamber'))} placeholder="e.g., 45" />
+        <NumberField id="pistonDishCc" label="Piston Dish (positive)" value={pistonDishCc} min={0} max={50} step={0.1} error={validation.errors.find(e => e.includes('dish'))} placeholder="e.g., 5" />
+        <NumberField id="pistonDomeCc" label="Piston Dome (positive)" value={pistonDomeCc} min={0} max={50} step={0.1} error={validation.errors.find(e => e.includes('dome'))} placeholder="e.g., 0" />
+      </fieldset>
+      <fieldset>
+        <legend>Head Gasket & Deck</legend>
+        <NumberField id="gasketBore" label="Gasket Bore" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={gasketBore} min={50} max={150} step={unitSystem === 'mm' ? 0.1 : 0.001} error={validation.errors.find(e => e.includes('Gasket bore'))} placeholder={unitSystem === 'mm' ? 'e.g., 87' : 'e.g., 3.425'} />
+        <NumberField id="gasketThickness" label="Gasket Thickness" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={gasketThickness} min={0} max={5} step={unitSystem === 'mm' ? 0.01 : 0.001} error={validation.errors.find(e => e.includes('Gasket thickness'))} placeholder={unitSystem === 'mm' ? 'e.g., 1.2' : 'e.g., 0.047'} />
+        <NumberField id="deckClearance" label="Deck Clearance" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={deckClearance} min={0} max={5} step={unitSystem === 'mm' ? 0.01 : 0.001} error={validation.errors.find(e => e.includes('Deck clearance'))} placeholder={unitSystem === 'mm' ? 'e.g., 0.5' : 'e.g., 0.02'} />
+      </fieldset>
+      <div class="form-actions">
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>mm</span></label>
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>inches</span></label>
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/compression-ratio/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+    <ResultCard slot="results" primaryValue={`${result.compressionRatio.toFixed(2)}:1`} primaryLabel="Static Compression Ratio" secondaryValues={[
+      { label: 'Swept Volume / Cylinder', value: `${result.sweptVolumeCc.toFixed(1)} cc` },
+      { label: 'Total Clearance Volume', value: `${result.totalClearanceVolumeCc.toFixed(1)} cc` },
+      { label: 'Chamber Volume', value: `${result.componentVolumes.chamberCc.toFixed(1)} cc` },
+      { label: 'Gasket Volume', value: `${result.componentVolumes.gasketCc.toFixed(1)} cc` },
+      { label: 'Deck Volume', value: `${result.componentVolumes.deckCc.toFixed(1)} cc` },
+      { label: 'Piston Dish', value: `${result.componentVolumes.dishCc.toFixed(1)} cc` },
+      { label: 'Piston Dome', value: `${result.componentVolumes.domeCc.toFixed(1)} cc` },
+    ]} interpretation={result.interpretation} />
+    <FormulaBlock slot="explanation" title="Formula" formula={`Vs = π/4 × bore² × stroke / 1000\nVg = π/4 × gasket_bore² × gasket_thickness / 1000\nVd = π/4 × bore² × deck_clearance / 1000\nVc = chamber + Vg + Vd + dish - dome\nCR = (Vs + Vc) / Vc`} variables={[
+      { symbol: 'Vs', name: 'Swept volume per cylinder', unit: 'cc' },
+      { symbol: 'Vg', name: 'Gasket volume', unit: 'cc' },
+      { symbol: 'Vd', name: 'Deck clearance volume', unit: 'cc' },
+      { symbol: 'Vc', name: 'Total clearance volume', unit: 'cc' },
+      { symbol: 'CR', name: 'Compression ratio', unit: 'ratio' },
+    ]} notes={[
+      'All linear dimensions converted to mm before volume calculation.',
+      'Volumes in cc: 1 cm³ = 1000 mm³.',
+      'Piston dome volume is subtracted (reduces clearance volume).',
+      'Static CR ≠ Dynamic CR. Does not determine octane requirement alone.',
+    ]} />
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> 86 mm bore, 86 mm stroke, 45 cc chamber, 5 cc dish, 0 dome, 87 mm gasket bore, 1.2 mm gasket, 0.5 mm deck.</p>
+      <ul>
+        <li>Vs = π/4 × 86² × 86 / 1000 = <strong>499.6 cc</strong></li>
+        <li>Vg = π/4 × 87² × 1.2 / 1000 = <strong>7.1 cc</strong></li>
+        <li>Vd = π/4 × 86² × 0.5 / 1000 = <strong>2.9 cc</strong></li>
+        <li>Vc = 45 + 7.1 + 2.9 + 5 - 0 = <strong>60 cc</strong></li>
+        <li>CR = (499.6 + 60) / 60 = <strong>9.32:1</strong></li>
+      </ul>
+    </div>
+    <div slot="limitations" class="limitations">
+      <p><strong>Important limitation:</strong> This calculates <em>static</em> compression ratio only.</p>
+      <ul>
+        <li>Does not account for intake valve closing timing (dynamic CR)</li>
+        <li>Does not determine octane requirement by itself</li>
+        <li>Assumes perfect sealing, no blow-by</li>
+        <li>Real-world CR affected by carbon deposits, head gasket crush, block decking</li>
+      </ul>
+    </div>
+    <RelatedTools slot="related" tools={[
+      { title: 'Engine Displacement Calculator', href: '/calculators/engine-displacement/', description: 'Calculate displacement from bore/stroke/cylinders' },
+      { title: 'Compression Ratio Explained', href: '/guides/compression-ratio-explained/', description: 'Static vs dynamic CR, octane considerations' },
+      { title: 'Bore vs Stroke', href: '/guides/bore-vs-stroke/', description: 'Oversquare, square, undersquare geometries' },
+    ]} />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculateCompressionRatio } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="compression-ratio"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculateCompressionRatio(parseFloat(fd.get('bore')), parseFloat(fd.get('stroke')), parseFloat(fd.get('chamberCc')), parseFloat(fd.get('pistonDishCc')), parseFloat(fd.get('pistonDomeCc')), parseFloat(fd.get('gasketBore')), parseFloat(fd.get('gasketThickness')), parseFloat(fd.get('deckClearance')), fd.get('unitSystem') as 'mm' | 'in');
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.compressionRatio.toFixed(2)}:1</span><span class="result-label">Static Compression Ratio</span></div><dl class="result-secondary"><div class="result-row"><dt>Swept Volume / Cylinder</dt><dd>${r.sweptVolumeCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Total Clearance Volume</dt><dd>${r.totalClearanceVolumeCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Chamber Volume</dt><dd>${r.componentVolumes.chamberCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Gasket Volume</dt><dd>${r.componentVolumes.gasketCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Deck Volume</dt><dd>${r.componentVolumes.deckCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Piston Dish</dt><dd>${r.componentVolumes.dishCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Piston Dome</dt><dd>${r.componentVolumes.domeCc.toFixed(1)} cc</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .form-actions { display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); flex-wrap: wrap; }
+  .unit-toggle { display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer; font-size: 0.8rem; color: var(--text-secondary); }
+  .unit-toggle input { accent-color: var(--accent); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .limitations em { color: var(--error); }
+</style>

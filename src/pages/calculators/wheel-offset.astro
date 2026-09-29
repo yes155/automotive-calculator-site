@@ -1,0 +1,147 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculateWheelOffset, validateWheelOffset, type WheelOffsetInput } from '../../lib/calculators/wheelOffset.ts';
+
+const url = new URL(Astro.url);
+const currentWidthIn = parseFloat(url.searchParams.get('currentWidthIn') || '8');
+const currentOffsetMm = parseFloat(url.searchParams.get('currentOffsetMm') || '35');
+const newWidthIn = parseFloat(url.searchParams.get('newWidthIn') || '9');
+const newOffsetMm = parseFloat(url.searchParams.get('newOffsetMm') || '45');
+
+const input: WheelOffsetInput = { currentWidthIn, currentOffsetMm, newWidthIn, newOffsetMm };
+const validation = validateWheelOffset(input);
+const result = calculateWheelOffset(input);
+const canonical = '/calculators/wheel-offset/';
+---
+
+<Layout title="Wheel Offset Calculator" description="Compare your current wheel with a proposed wheel to see how inner clearance and outer poke change. Enter width (inches) and offset ET (mm) for both wheels." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Wheel Offset Calculator', url: '/calculators/wheel-offset/' }]}>
+  <CalculatorShell title="Wheel Offset Calculator" description="Compare a current wheel with a proposed wheel and see how far the inner and outer edges move. Enter width (inches) and offset ET (mm) for both wheels." calculatorId="wheel-offset">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="wheel-offset">
+      <fieldset>
+        <legend>Current Wheel</legend>
+        <NumberField id="currentWidthIn" label="Wheel Width" unit="inches" value={currentWidthIn} min={3} max={20} step={0.5} error={validation.errors.find(e => e.includes('Current wheel width'))} warning={validation.warnings.find(w => w.includes('Current wheel width'))} placeholder="e.g., 8" />
+        <NumberField id="currentOffsetMm" label="Offset (ET)" unit="mm" value={currentOffsetMm} min={-100} max={100} step={1} error={validation.errors.find(e => e.includes('Current offset'))} warning={validation.warnings.find(w => w.includes('Current offset'))} placeholder="e.g., 35" />
+      </fieldset>
+      <fieldset>
+        <legend>New Wheel</legend>
+        <NumberField id="newWidthIn" label="Wheel Width" unit="inches" value={newWidthIn} min={3} max={20} step={0.5} error={validation.errors.find(e => e.includes('New wheel width'))} warning={validation.warnings.find(w => w.includes('New wheel width'))} placeholder="e.g., 9" />
+        <NumberField id="newOffsetMm" label="Offset (ET)" unit="mm" value={newOffsetMm} min={-100} max={100} step={1} error={validation.errors.find(e => e.includes('New offset'))} warning={validation.warnings.find(w => w.includes('New offset'))} placeholder="e.g., 45" />
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/wheel-offset/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+
+    <ResultCard
+      slot="results"
+      primaryValue={result.interpretation}
+      primaryLabel="Summary"
+      secondaryValues={[
+        { label: 'Inner Clearance Change', value: `${result.innerClearanceChangeMm > 0 ? '+' : ''}${result.innerClearanceChangeMm.toFixed(1)} mm` },
+        { label: 'Outer Poke Change', value: `${result.outerPokeChangeMm > 0 ? '+' : ''}${result.outerPokeChangeMm.toFixed(1)} mm` },
+        { label: 'Old Inner Position', value: `${result.oldInnerPositionMm.toFixed(1)} mm` },
+        { label: 'Old Outer Position', value: `${result.oldOuterPositionMm.toFixed(1)} mm` },
+        { label: 'New Inner Position', value: `${result.newInnerPositionMm.toFixed(1)} mm` },
+        { label: 'New Outer Position', value: `${result.newOuterPositionMm.toFixed(1)} mm` },
+      ]}
+    />
+
+    <FormulaBlock
+      slot="explanation"
+      title="Formula"
+      formula={`half_width_mm = width_in × 25.4 / 2
+inner_position = half_width_mm + offset_mm
+outer_position = half_width_mm - offset_mm
+inner_clearance_change = old_inner_position - new_inner_position
+outer_poke_change = new_outer_position - old_outer_position`}
+      variables={[
+        { symbol: 'width_in', name: 'Wheel width', unit: 'inches' },
+        { symbol: 'offset_mm', name: 'Offset (ET)', unit: 'mm' },
+        { symbol: 'half_width_mm', name: 'Half width', unit: 'mm' },
+        { symbol: 'inner_position', name: 'Distance from hub to inner edge', unit: 'mm' },
+        { symbol: 'outer_position', name: 'Distance from hub to outer edge', unit: 'mm' },
+      ]}
+      notes={[
+        'Positive inner clearance change means the new wheel provides MORE clearance to suspension components.',
+        'Negative inner clearance change means the new wheel sits CLOSER to suspension (less clearance).',
+        'Positive outer poke change means the new wheel extends FARTHER toward the fender.',
+        'Negative outer poke change means the new wheel sits MORE INWARD toward the suspension.',
+      ]}
+    />
+
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> Current wheel: 8″ × ET35. Proposed wheel: 9″ × ET45.</p>
+      <ul>
+        <li>Old half-width: 8 × 25.4 / 2 = 101.6 mm</li>
+        <li>Old inner: 101.6 + 35 = 136.6 mm | Old outer: 101.6 − 35 = 66.6 mm</li>
+        <li>New half-width: 9 × 25.4 / 2 = 114.3 mm</li>
+        <li>New inner: 114.3 + 45 = 159.3 mm | New outer: 114.3 − 45 = 69.3 mm</li>
+        <li>Inner clearance change: 136.6 − 159.3 = <strong>−22.7 mm</strong> (22.7 mm less clearance)</li>
+        <li>Outer poke change: 69.3 − 66.6 = <strong>+2.7 mm</strong> (2.7 mm farther out)</li>
+      </ul>
+    </div>
+
+    <div slot="limitations" class="limitations">
+      <p><strong>Important limitation:</strong> This calculator shows wheel rim geometry only. It does <em>not</em> guarantee:</p>
+      <ul>
+        <li>Brake caliper clearance</li>
+        <li>Suspension component clearance (struts, control arms, tie rods)</li>
+        <li>Tire sidewall clearance (tires are wider than the rim)</li>
+        <li>Fender/lip clearance</li>
+        <li>Hub bore compatibility</li>
+        <li>Load rating adequacy</li>
+      </ul>
+      <p>Always verify fitment with a physical test fit or professional consultation before purchasing.</p>
+    </div>
+
+    <RelatedTools
+      slot="related"
+      tools={[
+        { title: 'Tire Size Calculator', href: '/calculators/tire-size/', description: 'Compare tire diameters and speedometer effect' },
+        { title: 'Wheels & Tires Hub', href: '/wheels-tires/', description: 'All wheel and tire tools' },
+      ]}
+    />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculateWheelOffset } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="wheel-offset"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculateWheelOffset(parseFloat(fd.get('currentWidthIn')), parseFloat(fd.get('currentOffsetMm')), parseFloat(fd.get('newWidthIn')), parseFloat(fd.get('newOffsetMm')));
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.interpretation}</span><span class="result-label">Summary</span></div><dl class="result-secondary"><div class="result-row"><dt>Inner Clearance Change</dt><dd>${r.innerClearanceChangeMm > 0 ? '+' : ''}${r.innerClearanceChangeMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>Outer Poke Change</dt><dd>${r.outerPokeChangeMm > 0 ? '+' : ''}${r.outerPokeChangeMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>Old Inner Position</dt><dd>${r.oldInnerPositionMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>Old Outer Position</dt><dd>${r.oldOuterPositionMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>New Inner Position</dt><dd>${r.newInnerPositionMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>New Outer Position</dt><dd>${r.newOuterPositionMm.toFixed(1)} mm</dd></div></dl>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .limitations em { color: var(--error); }
+</style>

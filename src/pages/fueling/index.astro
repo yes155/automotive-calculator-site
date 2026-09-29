@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+---
+
+<Layout title="Fueling Calculators" description="Fuel system calculators for injector sizing and BSFC.">
+  <section class="hub-page">
+    <header>
+      <h1>Fueling</h1>
+      <p>Fuel system calculators for injector flow sizing and BSFC reference.</p>
+    </header>
+    <RelatedTools tools={[
+      { title: 'Fuel Injector Calculator', href: '/calculators/fuel-injector/', description: 'lb/hr and cc/min per injector from HP, BSFC, duty cycle, fuel density' },
+    ]} />
+    <div class="hub-section">
+      <h2>Related Guides</h2>
+      <RelatedTools tools={[
+        { title: 'BSFC Explained', href: '/guides/bsfc-explained/', description: 'What brake-specific fuel consumption measures and why it varies' },
+      ]} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hub-page { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .hub-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .hub-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .hub-page header p { color: var(--text-secondary); font-size: 0.95rem; }
+  .hub-section { margin-top: 2rem; }
+  .hub-section h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-primary); }
+</style>

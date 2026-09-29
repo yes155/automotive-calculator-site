@@ -1,0 +1,9 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#1a1a1a"/>
+  <rect x="40" y="40" width="1120" height="550" rx="12" fill="#242424" stroke="#f59e0b" stroke-width="3"/>
+  <circle cx="600" cy="180" r="60" fill="none" stroke="#f59e0b" stroke-width="4"/>
+  <path d="M600 140 V220 M560 180 H640" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>
+  <text x="600" y="320" font-family="system-ui, sans-serif" font-size="48" font-weight="700" fill="#e8e8e8" text-anchor="middle">Automotive Calculators</text>
+  <text x="600" y="380" font-family="system-ui, sans-serif" font-size="24" fill="#b0b0b0" text-anchor="middle">Wheels • Tires • Engine • Performance • Fueling</text>
+  <text x="600" y="480" font-family="system-ui, sans-serif" font-size="18" fill="#808080" text-anchor="middle">Precision tools for DIY enthusiasts, tuners, and builders</text>
+</svg>

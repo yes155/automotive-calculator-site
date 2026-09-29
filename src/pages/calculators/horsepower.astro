@@ -1,0 +1,123 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CalculatorShell from '../../components/CalculatorShell.astro';
+import NumberField from '../../components/NumberField.astro';
+import ResultCard from '../../components/ResultCard.astro';
+import FormulaBlock from '../../components/FormulaBlock.astro';
+import RelatedTools from '../../components/RelatedTools.astro';
+import { calculateHorsepower, validateHorsepower, type HorsepowerInput } from '../../lib/calculators/horsepower.ts';
+
+const url = new URL(Astro.url);
+const torque = parseFloat(url.searchParams.get('torque') || '400');
+const torqueUnit = (url.searchParams.get('torqueUnit') as 'lb-ft' | 'nm') || 'lb-ft';
+const rpm = parseFloat(url.searchParams.get('rpm') || '6000');
+const input: HorsepowerInput = { torque, torqueUnit, rpm };
+const validation = validateHorsepower(input);
+const result = calculateHorsepower(input);
+const canonical = '/calculators/horsepower/';
+---
+
+<Layout title="Horsepower Calculator" description="Calculate horsepower and kW from torque and RPM. Supports lb-ft and N·m torque units." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Horsepower Calculator', url: '/calculators/horsepower/' }]}>
+  <CalculatorShell title="Horsepower Calculator" description="Calculate mechanical horsepower (hp) and kilowatts (kW) from torque and RPM. Enter torque in lb-ft or N·m." calculatorId="horsepower">
+    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="horsepower">
+      <fieldset>
+        <legend>Inputs</legend>
+        <div class="torque-group">
+          <NumberField id="torque" label="Torque" value={torque} min={0} max={2000} step={1} error={validation.errors.find(e => e.includes('Torque'))} placeholder="e.g., 400" />
+          <select id="torqueUnit" name="torqueUnit" class="unit-select" onchange="this.form.querySelector('button[type=submit]').click()">
+            <option value="lb-ft" selected={torqueUnit === 'lb-ft'}>lb-ft</option>
+            <option value="nm" selected={torqueUnit === 'nm'}>N·m</option>
+          </select>
+        </div>
+        <NumberField id="rpm" label="RPM" value={rpm} min={0} max={15000} step={10} error={validation.errors.find(e => e.includes('RPM'))} placeholder="e.g., 6000" />
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Calculate</button>
+        <a href="/calculators/horsepower/" class="btn-secondary">Reset</a>
+      </div>
+    </form>
+    <ResultCard slot="results" primaryValue={`${result.hp.toFixed(1)} hp (${result.kw.toFixed(1)} kW)`} primaryLabel="Power Output" secondaryValues={[
+      { label: 'Torque', value: `${result.torqueLbft.toFixed(1)} lb-ft / ${result.torqueNm.toFixed(1)} N·m` },
+      { label: 'RPM', value: rpm.toLocaleString() },
+    ]} interpretation={result.interpretation} />
+    <FormulaBlock slot="explanation" title="Formula" formula={`hp = torque_lbft × RPM / 5252.113\nkW = torque_Nm × RPM / 9549.297\nhp = kW / 0.745699872`} variables={[
+      { symbol: 'torque_lbft', name: 'Torque in pound-feet', unit: 'lb-ft' },
+      { symbol: 'torque_Nm', name: 'Torque in Newton-meters', unit: 'N·m' },
+      { symbol: 'RPM', name: 'Engine speed', unit: 'rev/min' },
+      { symbol: '5252.113', name: 'Constant (33,000 / 2π)' },
+      { symbol: '9549.297', name: 'Constant (60,000 / 2π)' },
+    ]} notes={[
+      'At 5,252 RPM, torque (lb-ft) numerically equals horsepower.',
+      'Calculated shaft power from torque/RPM ≠ advertised engine power unless measured at same point.',
+      '1 mechanical hp = 0.745699872 kW exactly.',
+      '1 lb-ft = 1.35581795 N·m.',
+    ]} />
+    <div slot="example" class="worked-example">
+      <p><strong>Example:</strong> 400 lb-ft @ 6,000 RPM</p>
+      <ul>
+        <li>hp = 400 × 6000 / 5252.113 = <strong>456.9 hp</strong></li>
+        <li>kW = 456.9 × 0.7457 = <strong>340.7 kW</strong></li>
+      </ul>
+      <p><strong>5252 Crossover Example:</strong> 525.2 lb-ft @ 5,252 RPM</p>
+      <ul>
+        <li>hp = 525.2 × 5252 / 5252.113 = <strong>525.2 hp</strong></li>
+        <li>Torque (lb-ft) = Horsepower at exactly 5,252 RPM</li>
+      </ul>
+    </div>
+    <div slot="limitations" class="limitations">
+      <p><strong>Limitations:</strong></p>
+      <ul>
+        <li>Calculated power assumes torque value at the same measurement point as RPM</li>
+        <li>Advertised engine power often differs from calculated shaft power</li>
+        <li>Does not account for drivetrain losses (wheel hp vs crank hp)</li>
+        <li>Peak torque and peak power occur at different RPMs</li>
+        <li>Measurement standard (SAE vs DIN vs JIS) affects absolute values</li>
+      </ul>
+    </div>
+    <RelatedTools slot="related" tools={[
+      { title: 'Power-to-Weight Ratio', href: '/calculators/power-to-weight/', description: 'hp/lb, hp/ton, kW/kg, W/kg' },
+      { title: 'Quarter Mile Estimator', href: '/calculators/quarter-mile/', description: 'Empirical ET and trap speed' },
+      { title: 'Horsepower vs Torque', href: '/guides/horsepower-vs-torque/', description: 'The relationship and 5252 crossover' },
+    ]} />
+  </CalculatorShell>
+</Layout>
+
+<script>
+  import { calculateHorsepower } from '../../lib/calculators/client.ts';
+  const form = document.querySelector('form[data-calculator="horsepower"]');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const r = calculateHorsepower(parseFloat(fd.get('torque')), fd.get('torqueUnit') as 'lb-ft' | 'nm', parseFloat(fd.get('rpm')));
+      const panel = document.querySelector('.result-panel');
+      if (panel) {
+        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.hp.toFixed(1)} hp (${r.kw.toFixed(1)} kW)</span><span class="result-label">Power Output</span></div><dl class="result-secondary"><div class="result-row"><dt>Torque</dt><dd>${r.torqueLbft.toFixed(1)} lb-ft / ${r.torqueNm.toFixed(1)} N·m</dd></div><div class="result-row"><dt>RPM</dt><dd>${parseFloat(fd.get('rpm')).toLocaleString()}</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
+      }
+    });
+  }
+</script>
+
+<style>
+  fieldset { border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; }
+  legend { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding: 0 0.5rem; }
+  .torque-group { display: flex; gap: 0.5rem; }
+  .torque-group > *:first-child { flex: 1; }
+  .unit-select { padding: 0.625rem 0.75rem; font-size: 0.85rem; font-family: var(--font-sans); font-weight: 500; color: var(--text-primary); background: var(--bg-tertiary); border: 1px solid var(--border-secondary); border-radius: var(--radius-md); cursor: pointer; min-width: 80px; }
+  .unit-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+  .worked-example { background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); line-height: 1.8; }
+  .worked-example ul { margin: 0; padding-left: 1.25rem; }
+  .worked-example li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  .worked-example strong { color: var(--accent); }
+  .limitations { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2); border-radius: var(--radius-md); padding: 1rem; }
+  .limitations p { margin-top: 0; margin-bottom: 0.5rem; }
+  .limitations ul { margin: 0; padding-left: 1.25rem; }
+  .limitations li { margin-bottom: 0.25rem; font-size: 0.9rem; }
+  @media (max-width: 480px) { .torque-group { flex-direction: column; } }
+</style>

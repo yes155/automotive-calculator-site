@@ -1,17 +1,154 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Automotive Calculators" description="Fast, trustworthy automotive calculators for wheels, tires, engine geometry, performance, and fueling. Built for DIY enthusiasts, tuners, and builders.">
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Automotive Calculators</h1>
+      <p>Precision tools for wheels, tires, engine geometry, performance, and fueling</p>
+      <nav class="hero-cta" aria-label="Quick links">
+        <a href="/calculators/wheel-offset/" class="btn-primary">Wheel Offset Calculator</a>
+        <a href="/calculators/" class="btn-secondary">Browse All Calculators</a>
+      </nav>
+    </div>
+  </section>
+
+  <section class="calc-grid" aria-labelledby="calculators-heading">
+    <h2 id="calculators-heading">Calculators by Category</h2>
+    <div class="category-grid">
+      <article class="category-card">
+        <header><h3><a href="/wheels-tires/">Wheels & Tires</a></h3></header>
+        <ul>
+          <li><a href="/calculators/wheel-offset/">Wheel Offset Calculator</a> — Compare inner clearance and outer poke</li>
+          <li><a href="/calculators/tire-size/">Tire Size Calculator</a> — Compare dimensions and speedometer effect</li>
+        </ul>
+      </article>
+      <article class="category-card">
+        <header><h3><a href="/engine/">Engine Geometry</a></h3></header>
+        <ul>
+          <li><a href="/calculators/compression-ratio/">Compression Ratio Calculator</a> — Static CR with component breakdown</li>
+          <li><a href="/calculators/engine-displacement/">Engine Displacement Calculator</a> — Bore, stroke, cylinders → cc/L/ci</li>
+        </ul>
+      </article>
+      <article class="category-card">
+        <header><h3><a href="/performance/">Performance</a></h3></header>
+        <ul>
+          <li><a href="/calculators/power-to-weight/">Power-to-Weight Ratio</a> — hp/lb, hp/ton, kW/kg, W/kg</li>
+          <li><a href="/calculators/horsepower/">Horsepower Calculator</a> — Torque × RPM → hp/kW</li>
+          <li><a href="/calculators/quarter-mile/">Quarter Mile Estimator</a> — Empirical ET and trap speed</li>
+        </ul>
+      </article>
+      <article class="category-card">
+        <header><h3><a href="/fueling/">Fueling</a></h3></header>
+        <ul>
+          <li><a href="/calculators/fuel-injector/">Fuel Injector Calculator</a> — lb/hr and cc/min per injector</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="guides-section" aria-labelledby="guides-heading">
+    <h2 id="guides-heading">Technical Guides</h2>
+    <div class="guides-grid">
+      <article class="guide-card">
+        <h3><a href="/guides/wheel-offset-explained/">Wheel Offset Explained</a></h3>
+        <p>What positive, zero, and negative offset mean, and how width and offset interact.</p>
+      </article>
+      <article class="guide-card">
+        <h3><a href="/guides/compression-ratio-explained/">Compression Ratio Explained</a></h3>
+        <p>Static vs dynamic CR, component volumes, and octane considerations.</p>
+      </article>
+      <article class="guide-card">
+        <h3><a href="/guides/bore-vs-stroke/">Bore vs Stroke</a></h3>
+        <p>Oversquare, square, and undersquare geometries explained.</p>
+      </article>
+      <article class="guide-card">
+        <h3><a href="/guides/horsepower-vs-torque/">Horsepower vs Torque</a></h3>
+        <p>The relationship, the 5252 crossover, and what each means for driving.</p>
+      </article>
+      <article class="guide-card">
+        <h3><a href="/guides/bsfc-explained/">BSFC Explained</a></h3>
+        <p>What brake-specific fuel consumption measures and why it matters for injector sizing.</p>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding: 4rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-primary);
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  }
+  .hero-content { max-width: 700px; margin: 0 auto; }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+  .hero-cta { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary, .btn-secondary {
+    display: inline-block; padding: 0.75rem 1.5rem;
+    font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md);
+    transition: all var(--transition); text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--accent); color: var(--bg-primary);
+    border: 1px solid var(--accent);
+  }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg-primary); }
+  .btn-secondary {
+    background: transparent; color: var(--text-secondary);
+    border: 1px solid var(--border-secondary);
+  }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); }
+
+  .calc-grid, .guides-section {
+    max-width: 1100px; margin: 0 auto; padding: 3rem 1rem;
+  }
+  .calc-grid h2, .guides-section h2 {
+    font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--accent); margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-primary);
+  }
+  .category-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;
+  }
+  .category-card {
+    background: var(--bg-panel); border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg); padding: 1.25rem;
+    transition: border-color var(--transition);
+  }
+  .category-card:hover { border-color: var(--border-secondary); }
+  .category-card header { margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-primary); }
+  .category-card h3 { font-size: 0.95rem; }
+  .category-card h3 a { color: var(--text-primary); }
+  .category-card h3 a:hover { color: var(--accent); }
+  .category-card ul { list-style: none; padding: 0; margin: 0; }
+  .category-card li { margin-bottom: 0.5rem; font-size: 0.85rem; line-height: 1.5; }
+  .category-card li:last-child { margin-bottom: 0; }
+  .category-card a { color: var(--text-secondary); }
+  .category-card a:hover { color: var(--accent); }
+
+  .guides-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;
+  }
+  .guide-card {
+    background: var(--bg-panel); border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md); padding: 1rem;
+    transition: border-color var(--transition);
+  }
+  .guide-card:hover { border-color: var(--accent); }
+  .guide-card h3 { font-size: 0.85rem; margin-bottom: 0.375rem; }
+  .guide-card h3 a { color: var(--text-primary); }
+  .guide-card h3 a:hover { color: var(--accent); }
+  .guide-card p { margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+</style>

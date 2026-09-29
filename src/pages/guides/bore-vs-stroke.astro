@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Bore vs Stroke" description="Understanding oversquare, square, and undersquare engine geometries and their implications.">
+  <article class="guide-page">
+    <header>
+      <h1>Bore vs Stroke: Engine Geometry Explained</h1>
+      <p class="guide-meta">Oversquare, square, and undersquare — what the bore/stroke ratio means</p>
+    </header>
+    <section>
+      <h2>Definitions</h2>
+      <ul>
+        <li><strong>Bore:</strong> Cylinder diameter</li>
+        <li><strong>Stroke:</strong> Piston travel distance (TDC to BDC)</li>
+        <li><strong>Bore/Stroke Ratio:</strong> Bore ÷ Stroke</li>
+      </ul>
+      <p class="formula-inline">B/S Ratio = Bore / Stroke</p>
+    </section>
+    <section>
+      <h2>Three Geometry Categories</h2>
+      <table class="guide-table">
+        <thead><tr><th>Category</th><th>Ratio</th><th>Characteristics</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Oversquare</strong> (Short-stroke)</td><td>> 1.05</td><td>Bore > Stroke. Larger valves possible, lower piston speed, favors high-RPM power. Common in sport bikes, F1, motorcycle engines.</td></tr>
+          <tr><td><strong>Square</strong></td><td>~1.0 (0.95–1.05)</td><td>Bore ≈ Stroke. Balanced characteristics. Many modern production engines target near-square for efficiency.</td></tr>
+          <tr><td><strong>Undersquare</strong> (Long-stroke)</td><td>< 0.95</td><td>Stroke > Bore. Higher piston speed at given RPM, favors low-end torque, better thermal efficiency. Common in diesel, truck, and older pushrod V8s.</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Common Examples</h2>
+      <table class="guide-table">
+        <thead><tr><th>Engine</th><th>Bore (mm)</th><th>Stroke (mm)</th><th>Ratio</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Honda K20A</td><td>86</td><td>86</td><td>1.00</td><td>Square</td></tr>
+          <tr><td>BMW S54</td><td>87</td><td>91</td><td>0.96</td><td>Near-square</td></tr>
+          <tr><td>Chevy LS3</td><td>103.3</td><td>92</td><td>1.12</td><td>Oversquare</td></tr>
+          <tr><td>Ford 5.0 Coyote</td><td>92.2</td><td>92.7</td><td>0.99</td><td>Square</td></tr>
+          <tr><td>Cummins 6.7L</td><td>107</td><td>124</td><td>0.86</td><td>Undersquare</td></tr>
+          <tr><td>Subaru EJ25</td><td>99.5</td><td>79</td><td>1.26</td><td>Oversquare</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>What Bore/Stroke Ratio Does NOT Tell You</h2>
+      <p><strong>The bore/stroke ratio is descriptive geometry only.</strong> It does not determine:</p>
+      <ul>
+        <li>Peak power or torque output</li>
+        <li>Powerband shape</li>
+        <li>Engine reliability or longevity</li>
+        <li>Fuel efficiency</li>
+        <li>Whether an engine is "better"</li>
+      </ul>
+      <p>Two engines with the same bore/stroke ratio can have completely different power curves depending on:</p>
+      <ul>
+        <li>Head flow and port design</li>
+        <li>Camshaft profile</li>
+        <li>Intake/exhaust tuning</li>
+        <li>Compression ratio</li>
+        <li>Forced induction vs NA</li>
+        <li>RPM limit and rod/stroke ratio</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Practical Implications</h2>
+      <h3>Valve Area</h3>
+      <p>Larger bore allows larger valves (or 4 valves per cylinder with less shrouding), improving high-RPM breathing.</p>
+      <h3>Piston Speed</h3>
+      <p>Mean piston speed = 2 × Stroke × RPM / 60. Long-stroke engines reach high piston speeds at lower RPM, limiting redline.</p>
+      <h3>Rod/Stroke Ratio</h3>
+      <p>Connecting rod length ÷ Stroke affects side loading, dwell at TDC, and piston acceleration. Often more important than bore/stroke alone.</p>
+      <h3>Thermal Efficiency</h3>
+      <p>Undersquare (long-stroke) engines have less surface-area-to-volume ratio at TDC, reducing heat loss and improving thermal efficiency — why diesels are undersquare.</p>
+    </section>
+    <section>
+      <h2>Key Takeaway</h2>
+      <p>Bore/stroke ratio describes <strong>geometry</strong>, not <strong>performance</strong>. It's one of many design parameters. Don't assume "oversquare = more power" or "undersquare = more torque" as absolute rules. The <a href="/calculators/engine-displacement/">Engine Displacement Calculator</a> shows the ratio for reference only.</p>
+    </section>
+    <nav class="guide-nav">
+      <a href="/calculators/engine-displacement/" class="btn-primary">Engine Displacement Calculator</a>
+      <a href="/engine/" class="btn-secondary">Engine Hub</a>
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .guide-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; line-height: 1.7; }
+  .guide-page header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .guide-meta { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+  .guide-page h2 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; padding-bottom: 0.375rem; border-bottom: 1px solid var(--border-primary); }
+  .guide-page h3 { font-size: 0.95rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+  .guide-page p { margin: 0 0 0.75rem; color: var(--text-secondary); }
+  .guide-page ul { margin: 0 0 0.75rem 1.25rem; color: var(--text-secondary); }
+  .guide-page li { margin-bottom: 0.375rem; }
+  .guide-page strong { color: var(--text-primary); }
+  .guide-page a { color: var(--accent); }
+  .formula-inline { font-family: var(--font-mono); background: var(--bg-tertiary); padding: 0.75rem 1rem; border-radius: var(--radius-md); display: block; margin: 0.75rem 0; font-size: 0.9rem; color: var(--accent); }
+  .guide-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.8rem; }
+  .guide-table th, .guide-table td { padding: 0.5rem 0.5rem; border: 1px solid var(--border-primary); text-align: left; }
+  .guide-table th { background: var(--bg-tertiary); font-weight: 600; color: var(--text-primary); }
+  .guide-table tr:nth-child(even) td { background: var(--bg-secondary); }
+  .guide-nav { display: flex; gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-primary); }
+  .btn-primary, .btn-secondary { padding: 0.625rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition); border: 1px solid transparent; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn-primary { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg-primary); text-decoration: none; }
+  .btn-secondary { background: transparent; color: var(--text-secondary); border-color: var(--border-secondary); }
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+</style>
