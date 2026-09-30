@@ -94,19 +94,19 @@ export function calculateTireSize(tireAWidth, tireAAspect, tireARim, tireBWidth,
   const tireADiameterMm = 2 * tireASidewall + tireARim * INCH_TO_MM;
   const tireADiameterIn = tireADiameterMm / INCH_TO_MM;
   const tireACircumference = Math.PI * tireADiameterMm;
-  const tireARevsPerMile = 63360 / tireADiameterIn;
+  const tireARevsPerMile = 63360 / tireACircumference;
   const tireBSidewall = tireBWidth * tireBAspect / 100;
   const tireBDiameterMm = 2 * tireBSidewall + tireBRim * INCH_TO_MM;
   const tireBDiameterIn = tireBDiameterMm / INCH_TO_MM;
   const tireBCircumference = Math.PI * tireBDiameterMm;
-  const tireBRevsPerMile = 63360 / tireBDiameterIn;
+  const tireBRevsPerMile = 63360 / tireBCircumference;
   const diameterDiffMm = tireBDiameterMm - tireADiameterMm;
   const diameterDiffPct = (diameterDiffMm / tireADiameterMm) * 100;
   const circumferenceDiffMm = tireBCircumference - tireACircumference;
   const circumferenceDiffPct = (circumferenceDiffMm / tireACircumference) * 100;
   const groundClearanceChangeMm = diameterDiffMm / 2;
-  const speedometerEffectPct = (tireBDiameterMm / tireADiameterMm - 1) * 100;
-  const speedometerReadingAt60 = 60 * (tireADiameterMm / tireBDiameterMm);
-  const interpretation = `Tire B is ${Math.abs(diameterDiffMm).toFixed(1)} mm (${Math.abs(diameterDiffPct).toFixed(1)}%) ${diameterDiffMm > 0 ? 'larger' : 'smaller'} in diameter than Tire A. Ground clearance changes by ${Math.abs(groundClearanceChangeMm).toFixed(1)} mm. At 60 MPH indicated, actual speed = ${speedometerReadingAt60.toFixed(1)} MPH (${speedometerEffectPct > 0 ? 'speedometer reads slow' : 'speedometer reads fast'} by ${Math.abs(speedometerEffectPct).toFixed(1)}%). Note: Nominal tire dimensions can differ from measured dimensions by model, rim width, pressure, and load.`;
-  return { tireA: { sidewallMm: tireASidewall, diameterMm: tireADiameterMm, diameterIn: tireADiameterIn, circumferenceMm: tireACircumference, revsPerMile: tireARevsPerMile }, tireB: { sidewallMm: tireBSidewall, diameterMm: tireBDiameterMm, diameterIn: tireBDiameterIn, circumferenceMm: tireBCircumference, revsPerMile: tireBRevsPerMile }, comparison: { diameterDiffMm, diameterDiffPct, circumferenceDiffMm, circumferenceDiffPct, groundClearanceChangeMm, speedometerEffectPct, speedometerReadingAt60 }, interpretation };
+  const speedometerErrorPct = (tireADiameterMm / tireBDiameterMm - 1) * 100;
+  const speedometerReadingAt60 = 60 * (tireBDiameterMm / tireADiameterMm);
+  const interpretation = `Tire B is ${Math.abs(diameterDiffMm).toFixed(1)} mm (${Math.abs(diameterDiffPct).toFixed(1)}%) ${diameterDiffMm > 0 ? 'larger' : 'smaller'} in diameter than Tire A. Ground clearance changes by ${Math.abs(groundClearanceChangeMm).toFixed(1)} mm. At 60 MPH indicated, actual speed = ${speedometerReadingAt60.toFixed(1)} MPH (speedometer reads ${speedometerErrorPct > 0 ? 'high' : 'low'} by ${Math.abs(speedometerErrorPct).toFixed(1)}%). Note: Nominal tire dimensions can differ from measured dimensions by model, rim width, pressure, and load.`;
+  return { tireA: { sidewallMm: tireASidewall, diameterMm: tireADiameterMm, diameterIn: tireADiameterIn, circumferenceMm: tireACircumference, revsPerMile: tireARevsPerMile }, tireB: { sidewallMm: tireBSidewall, diameterMm: tireBDiameterMm, diameterIn: tireBDiameterIn, circumferenceMm: tireBCircumference, revsPerMile: tireBRevsPerMile }, comparison: { diameterDiffMm, diameterDiffPct, circumferenceDiffMm, circumferenceDiffPct, groundClearanceChangeMm, speedometerErrorPct, speedometerReadingAt60 }, interpretation };
 }

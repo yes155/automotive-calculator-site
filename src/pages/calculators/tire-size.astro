@@ -46,7 +46,7 @@ const canonical = '/calculators/tire-size/';
       { label: 'Circumference Diff', value: `${result.comparison.circumferenceDiffMm > 0 ? '+' : ''}${result.comparison.circumferenceDiffMm.toFixed(1)} mm (${result.comparison.circumferenceDiffPct > 0 ? '+' : ''}${result.comparison.circumferenceDiffPct.toFixed(1)}%)` },
       { label: 'Ground Clearance', value: `${result.comparison.groundClearanceChangeMm > 0 ? '+' : ''}${result.comparison.groundClearanceChangeMm.toFixed(1)} mm` },
       { label: 'Speedometer at 60', value: `${result.comparison.speedometerReadingAt60.toFixed(1)} MPH actual` },
-      { label: 'Speedometer Error', value: `${result.comparison.speedometerEffectPct > 0 ? '+' : ''}${result.comparison.speedometerEffectPct.toFixed(1)}%` },
+      { label: 'Speedometer Error', value: `${result.comparison.speedometerErrorPct > 0 ? '+' : ''}${result.comparison.speedometerErrorPct.toFixed(1)}%` },
     ]} interpretation={result.interpretation} />
     <FormulaBlock slot="explanation" title="Formula" formula={`sidewall_mm = section_width_mm × aspect_ratio / 100\ndiameter_mm = 2 × sidewall_mm + rim_in × 25.4\ncircumference_mm = π × diameter_mm\nrevs_per_mile = 63360 / diameter_in\ndiameter_diff_mm = diameter_B - diameter_A\ndiameter_diff_pct = (diameter_diff / diameter_A) × 100\nground_clearance_change = diameter_diff / 2\nactual_speed = indicated_speed × diameter_A / diameter_B\nspeedometer_error_pct = (diameter_B / diameter_A - 1) × 100`} variables={[
       { symbol: 'section_width_mm', name: 'Tire section width', unit: 'mm' },
@@ -84,8 +84,7 @@ const canonical = '/calculators/tire-size/';
     </div>
     <RelatedTools slot="related" tools={[
       { title: 'Wheel Offset Calculator', href: '/calculators/wheel-offset/', description: 'Check inner/outer clearance when changing wheels' },
-      { title: 'How to Read Tire Size', href: '/guides/how-to-read-tire-size/', description: 'Decoding P-metric, LT, and Euro-metric codes (Phase 2)' },
-      { title: 'Tire Diameter vs Wheel Size', href: '/guides/tire-diameter-vs-wheel-size/', description: 'Plus-sizing, aspect ratio, ride quality (Phase 2)' },
+
       { title: 'Wheels & Tires Hub', href: '/wheels-tires/', description: 'All wheel and tire tools' },
     ]} />
   </CalculatorShell>

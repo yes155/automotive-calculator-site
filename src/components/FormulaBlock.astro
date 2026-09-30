@@ -19,7 +19,7 @@ const { title, formula, variables, notes = [] } = Astro.props;
       {variables.map(v => (
         <div class="var-row">
           <dt><code>{v.symbol}</code></dt>
-          <dd>{v.name}{v.unit && ` <span class="var-unit">({v.unit})</span>`}</dd>
+          <dd>{v.name}{v.unit && <span class="var-unit">({v.unit})</span>}</dd>
         </div>
       ))}
     </dl>
