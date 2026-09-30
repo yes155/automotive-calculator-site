@@ -55,11 +55,6 @@ const { title, description, calculatorId } = Astro.props;
   document.querySelectorAll('form[data-calculator]').forEach(form => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const calculatorId = form.dataset.calculator;
-      const formData = new FormData(form);
-      const params = new URLSearchParams();
-      formData.forEach((value, key) => params.append(key, value));
-      window.location.href = `${window.location.pathname}?${params.toString()}`;
     });
   });
 </script>
