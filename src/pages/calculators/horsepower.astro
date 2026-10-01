@@ -82,8 +82,14 @@ const canonical = '/calculators/horsepower/';
   </CalculatorShell>
 </Layout>
 
-<script>
-  import { calculateHorsepower } from '../../lib/calculators/client.ts';
+<script is:inline>
+  function calculateHorsepowerClient(torque, unit, rpm) {
+    var lbft = unit === 'lb-ft' ? torque : torque * 0.737562149;
+    var nm = unit === 'nm' ? torque : torque / 0.737562149;
+    var hp = (lbft * rpm) / 5252.113;
+    var kw = (nm * rpm) / 9549.297;
+    return { hp: hp, kw: kw, torqueLbft: lbft, torqueNm: nm };
+  }
   const form = document.querySelector('form[data-calculator="horsepower"]');
   if (form) {
     form.addEventListener('submit', (e) => {

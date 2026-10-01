@@ -110,8 +110,19 @@ outer_poke_change = new_outer_position - old_outer_position`}
   </CalculatorShell>
 </Layout>
 
-<script>
-  import { calculateWheelOffset } from '../../lib/calculators/client.ts';
+<script is:inline>
+  function calculateWheelOffsetClient(cW, cO, nW, nO) {
+    var INCH_TO_MM = 25.4;
+    var oldHalf = (cW * INCH_TO_MM) / 2;
+    var newHalf = (nW * INCH_TO_MM) / 2;
+    var oldInner = oldHalf + cO;
+    var oldOuter = oldHalf - cO;
+    var newInner = newHalf + nO;
+    var newOuter = newHalf - nO;
+    var innerChange = oldInner - newInner;
+    var outerChange = newOuter - oldOuter;
+    return { oldInnerPositionMm: oldInner, oldOuterPositionMm: oldOuter, newInnerPositionMm: newInner, newOuterPositionMm: newOuter, innerClearanceChangeMm: innerChange, outerPokeChangeMm: outerChange };
+  }
   const form = document.querySelector('form[data-calculator="wheel-offset"]');
   if (form) {
     form.addEventListener('submit', (e) => {

@@ -1,4 +1,4 @@
-import { PI_OVER_4 } from '../units/index.ts';
+import { PI_OVER_4, MM_PER_MILE, MM_PER_KM } from '../calc/index.ts';
 import { validatePositive, mergeValidations } from '../validation/index.ts';
 
 export interface TireSizeInput {
@@ -17,6 +17,7 @@ export interface TireSizeResult {
     diameterIn: number;
     circumferenceMm: number;
     revsPerMile: number;
+    revsPerKm: number;
   };
   tireB: {
     sidewallMm: number;
@@ -24,6 +25,7 @@ export interface TireSizeResult {
     diameterIn: number;
     circumferenceMm: number;
     revsPerMile: number;
+    revsPerKm: number;
   };
   comparison: {
     diameterDiffMm: number;
@@ -39,7 +41,6 @@ export interface TireSizeResult {
 
 const INCH_TO_MM = 25.4;
 const MM_TO_IN = 1 / INCH_TO_MM;
-const INCHES_PER_MILE = 63360;
 
 export function calculateTireSize(input: TireSizeInput): TireSizeResult {
   const { tireAWidth, tireAAspect, tireARim, tireBWidth, tireBAspect, tireBRim } = input;
@@ -48,13 +49,15 @@ export function calculateTireSize(input: TireSizeInput): TireSizeResult {
   const tireADiameterMm = 2 * tireASidewall + tireARim * INCH_TO_MM;
   const tireADiameterIn = tireADiameterMm * MM_TO_IN;
   const tireACircumference = Math.PI * tireADiameterMm;
-  const tireARevsPerMile = INCHES_PER_MILE / tireACircumference;
+  const tireARevsPerMile = MM_PER_MILE / tireACircumference;
+  const tireARevsPerKm = MM_PER_KM / tireACircumference;
   
   const tireBSidewall = tireBWidth * tireBAspect / 100;
   const tireBDiameterMm = 2 * tireBSidewall + tireBRim * INCH_TO_MM;
   const tireBDiameterIn = tireBDiameterMm * MM_TO_IN;
   const tireBCircumference = Math.PI * tireBDiameterMm;
-  const tireBRevsPerMile = INCHES_PER_MILE / tireBCircumference;
+  const tireBRevsPerMile = MM_PER_MILE / tireBCircumference;
+  const tireBRevsPerKm = MM_PER_KM / tireBCircumference;
   
   const diameterDiffMm = tireBDiameterMm - tireADiameterMm;
   const diameterDiffPct = (diameterDiffMm / tireADiameterMm) * 100;
@@ -80,6 +83,7 @@ export function calculateTireSize(input: TireSizeInput): TireSizeResult {
       diameterIn: tireADiameterIn,
       circumferenceMm: tireACircumference,
       revsPerMile: tireARevsPerMile,
+      revsPerKm: tireARevsPerKm,
     },
     tireB: {
       sidewallMm: tireBSidewall,
@@ -87,6 +91,7 @@ export function calculateTireSize(input: TireSizeInput): TireSizeResult {
       diameterIn: tireBDiameterIn,
       circumferenceMm: tireBCircumference,
       revsPerMile: tireBRevsPerMile,
+      revsPerKm: tireBRevsPerKm,
     },
     comparison: {
       diameterDiffMm,

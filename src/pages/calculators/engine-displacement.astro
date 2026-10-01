@@ -82,8 +82,17 @@ const canonical = '/calculators/engine-displacement/';
   </CalculatorShell>
 </Layout>
 
-<script>
-  import { calculateEngineDisplacement } from '../../lib/calculators/client.ts';
+<script is:inline>
+  function calculateEngineDisplacementClient(bore, stroke, cylinders, unit) {
+    var INCH_TO_MM = 25.4;
+    var toMm = function(v) { return unit === 'in' ? v * INCH_TO_MM : v; };
+    var bMm = toMm(bore), sMm = toMm(stroke);
+    var perCyl = (Math.PI / 4) * bMm * bMm * sMm / 1000;
+    var total = perCyl * cylinders;
+    var ratio = bMm / sMm;
+    var desc = ratio > 1.05 ? 'Oversquare (bore > stroke)' : ratio < 0.95 ? 'Undersquare (stroke > bore)' : 'Square (bore ≈ stroke)';
+    return { totalDisplacementCc: total, totalDisplacementL: total / 1000, totalDisplacementCi: total / 16.387064, perCylinderCc: perCyl, boreStrokeRatio: ratio, geometryDescription: desc };
+  }
   const form = document.querySelector('form[data-calculator="engine-displacement"]');
   if (form) {
     form.addEventListener('submit', (e) => {

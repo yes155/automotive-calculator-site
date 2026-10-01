@@ -88,7 +88,7 @@ const canonical = '/calculators/fuel-injector/';
   </CalculatorShell>
 </Layout>
 
-<script>
+<script is:inline>
   import { calculateFuelInjector } from '../../lib/calculators/client.ts';
   const form = document.querySelector('form[data-calculator="fuel-injector"]');
   if (form) {

@@ -18,7 +18,7 @@ describe('Tire Size Calculator', () => {
     expect(result.comparison.diameterDiffPct).toBeCloseTo(0, 1);
     expect(result.comparison.circumferenceDiffMm).toBeCloseTo(0, 1);
     expect(result.comparison.groundClearanceChangeMm).toBeCloseTo(0, 1);
-    expect(result.comparison.speedometerEffectPct).toBeCloseTo(0, 1);
+    expect(result.comparison.speedometerErrorPct).toBeCloseTo(0, 1);
     expect(result.comparison.speedometerReadingAt60).toBeCloseTo(60, 1);
   });
 
@@ -78,10 +78,10 @@ it('calculates speedometer effect correctly', () => {
     
     const result = calculateTireSize(input);
     
-    // Tire B is larger, so speedometer reads slow
-    // At 60 indicated, actual = 60 * (634.3 / 645.2) = 59.0
-    expect(result.comparison.speedometerReadingAt60).toBeCloseTo(59.0, 1);
-    expect(result.comparison.speedometerEffectPct).toBeCloseTo(1.7, 1);
+    // Tire B is larger, so speedometer reads low
+    // At 60 indicated, actual = 60 * (645.2 / 634.3) = 61.0
+    expect(result.comparison.speedometerReadingAt60).toBeCloseTo(61.0, 1);
+    expect(result.comparison.speedometerErrorPct).toBeCloseTo(-1.7, 1);
   });
 
   it('handles smaller tire B', () => {
@@ -99,7 +99,7 @@ it('calculates speedometer effect correctly', () => {
     // Tire B is smaller
     expect(result.comparison.diameterDiffMm).toBeLessThan(0);
     expect(result.comparison.groundClearanceChangeMm).toBeLessThan(0);
-    expect(result.comparison.speedometerReadingAt60).toBeGreaterThan(60);
+    expect(result.comparison.speedometerReadingAt60).toBeLessThan(60);
   });
 
   it('produces readable interpretation', () => {
@@ -133,7 +133,7 @@ it('calculates speedometer effect correctly', () => {
     
     const result = calculateTireSize(input);
     
-    // 63360 inches/mile / 24.97 in = ~2537 revs/mile
-    expect(result.tireA.revsPerMile).toBeCloseTo(2537, 0);
+    // 1609344 mm/mile / (π * 634.3 mm) = ~808 revs/mile
+    expect(result.tireA.revsPerMile).toBeCloseTo(808, 0);
   });
 });

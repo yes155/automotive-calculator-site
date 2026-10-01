@@ -99,7 +99,7 @@ const canonical = '/calculators/power-to-weight/';
   </CalculatorShell>
 </Layout>
 
-<script>
+<script is:inline>
   import { calculatePowerToWeight } from '../../lib/calculators/client.ts';
   const form = document.querySelector('form[data-calculator="power-to-weight"]');
   if (form) {

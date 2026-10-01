@@ -94,8 +94,15 @@ const canonical = '/calculators/quarter-mile/';
   </CalculatorShell>
 </Layout>
 
-<script>
-  import { calculateQuarterMile } from '../../lib/calculators/client.ts';
+<script is:inline>
+  function calculateQuarterMileClient(weight, unit, hp) {
+    var LB_TO_KG = 0.45359237;
+    var weightLb = unit === 'lb' ? weight : weight / LB_TO_KG;
+    var et = 5.825 * Math.pow(weightLb / hp, 1/3);
+    var trap = 234 * Math.pow(hp / weightLb, 1/3);
+    var p2w = hp / weightLb;
+    return { etSeconds: et, trapSpeedMph: trap, powerToWeightRatio: p2w };
+  }
   const form = document.querySelector('form[data-calculator="quarter-mile"]');
   if (form) {
     form.addEventListener('submit', (e) => {

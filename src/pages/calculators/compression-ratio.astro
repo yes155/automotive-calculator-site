@@ -99,7 +99,7 @@ const canonical = '/calculators/compression-ratio/';
   </CalculatorShell>
 </Layout>
 
-<script>
+<script is:inline>
   import { calculateCompressionRatio } from '../../lib/calculators/client.ts';
   const form = document.querySelector('form[data-calculator="compression-ratio"]');
   if (form) {
