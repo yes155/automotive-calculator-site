@@ -6,6 +6,16 @@ interface Props {
   calculatorId: string;
 }
 const { title, description, calculatorId } = Astro.props;
+const directions: Record<string, string> = {
+  'wheel-offset': 'Enter wheel width in inches and offset (ET) in millimeters for both wheels. A negative offset is allowed.',
+  'compression-ratio': 'Choose inches or millimeters for bore, stroke, gasket, and deck dimensions. Enter chamber, dish, and dome volumes in cc.',
+  'engine-displacement': 'Choose inches or millimeters for bore and stroke. Enter a whole-number cylinder count; results include cubic inches, liters, and cc.',
+  'horsepower': 'Enter torque in lb-ft and engine speed in RPM, or select N·m for metric torque. Results show mechanical horsepower and kW.',
+  'fuel-injector': 'Enter target horsepower and BSFC in lb/(hp·hr). Enter duty cycle as a decimal: 0.80 means 80%. Results show lb/hr and cc/min.',
+  'power-to-weight': 'Enter horsepower and vehicle weight in pounds, or select metric units. A US ton is 2,000 lb.',
+  'quarter-mile': 'Enter vehicle weight in pounds, including driver and carried load, and horsepower. Metric weight is also available; trap speed is in mph.',
+  'tire-size': 'Read the tire sidewall: 225/45R17 means 225 mm section width, 45% aspect ratio, and a 17-inch rim. Speed comparisons use mph.',
+};
 ---
 
 <article class="calculator-page" data-calculator={calculatorId}>
@@ -20,7 +30,8 @@ const { title, description, calculatorId } = Astro.props;
   <div class="calc-body">
     <section class="calc-inputs" aria-labelledby="inputs-heading">
       <h2 id="inputs-heading" class="visually-hidden">Calculator Inputs</h2>
-      <p class="input-note">Example inputs are prefilled. Enter your measurements, then select Calculate. The address bar saves the inputs for sharing.</p>
+      <p class="input-directions">{directions[calculatorId]}</p>
+      <p class="input-note">Example inputs are prefilled. Follow the input limits below each field, then select Calculate. The address bar saves the inputs for sharing.</p>
       <noscript><p class="calculator-error-summary">Enable JavaScript to calculate with your own inputs. The formula and worked example are available below.</p></noscript>
       <slot name="inputs" />
     </section>
@@ -52,6 +63,7 @@ const { title, description, calculatorId } = Astro.props;
 </article>
 
 <style>
+  .input-directions { font-size: 0.9rem; color: var(--text-primary); margin: 0 0 0.75rem; }
   .input-note { font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1rem; }
   :global(.calculator-field-error), :global(.calculator-error-summary) {
     color: var(--error);

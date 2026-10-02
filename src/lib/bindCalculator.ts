@@ -1,4 +1,5 @@
 import type { ValidationResult } from './validation';
+import { formatInputLimits } from './inputLimits';
 
 interface UnitGroup {
   name: string;
@@ -54,6 +55,10 @@ export function bindCalculator<Input extends object, Result>(id: string, options
   const defaultControls = [...form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')]
     .map(control => ({ control, value: control.value, checked: control instanceof HTMLInputElement ? control.checked : undefined }));
   const resetUnits: (() => void)[] = [];
+  const updateLimits = (field: HTMLInputElement) => {
+    const hint = document.getElementById(`${field.name}-limits`);
+    if (hint) hint.textContent = formatInputLimits({ min: field.min, max: field.max, step: field.step, unit: field.dataset.unit, approximate: field.dataset.approximateLimits === 'true' });
+  };
   let persistInputs = false;
   const errors = new Map<HTMLInputElement, HTMLParagraphElement>();
   fields.forEach(field => {
@@ -141,6 +146,7 @@ export function bindCalculator<Input extends object, Result>(id: string, options
         field.closest('.field')?.querySelector('.field-label')?.append(label);
       }
       label.textContent = field.dataset.unit;
+      updateLimits(field);
     });
     setLabels(previous);
     resetUnits.push(() => { previous = getUnit(); setLabels(previous); });
@@ -154,6 +160,7 @@ export function bindCalculator<Input extends object, Result>(id: string, options
         }
         if (field.value !== '' && Number.isFinite(field.valueAsNumber)) field.value = Number((field.valueAsNumber * factor).toPrecision(12)).toString();
         field.step = 'any';
+        field.dataset.approximateLimits = 'true';
       });
       previous = next;
       setLabels(next);
@@ -169,8 +176,12 @@ export function bindCalculator<Input extends object, Result>(id: string, options
       control.value = value;
       if (control instanceof HTMLInputElement && checked !== undefined) control.checked = checked;
     });
-    defaults.forEach(({ field, min, max, step }) => Object.assign(field, { min, max, step }));
+    defaults.forEach(({ field, min, max, step }) => {
+      Object.assign(field, { min, max, step });
+      delete field.dataset.approximateLimits;
+    });
     resetUnits.forEach(reset => reset());
+    fields.forEach(updateLimits);
     form.requestSubmit();
     const url = new URL(window.location.href);
     new FormData(form).forEach((_, name) => url.searchParams.delete(name));

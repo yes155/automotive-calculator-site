@@ -33,9 +33,9 @@ const canonical = '/calculators/compression-ratio/';
       </fieldset>
       <fieldset>
         <legend>Volumes (cc)</legend>
-        <NumberField id="chamberCc" label="Combustion Chamber" value={chamberCc} min={1} max={200} step={0.1} error={validation.errors.find(e => e.includes('Chamber'))} placeholder="e.g., 45" />
-        <NumberField id="pistonDishCc" label="Piston Dish (positive)" value={pistonDishCc} min={0} max={50} step={0.1} error={validation.errors.find(e => e.includes('dish'))} placeholder="e.g., 5" />
-        <NumberField id="pistonDomeCc" label="Piston Dome (positive)" value={pistonDomeCc} min={0} max={50} step={0.1} error={validation.errors.find(e => e.includes('dome'))} placeholder="e.g., 0" />
+        <NumberField id="chamberCc" label="Combustion Chamber" unit="cc" value={chamberCc} min={1} max={200} step={0.1} error={validation.errors.find(e => e.includes('Chamber'))} placeholder="e.g., 45" />
+        <NumberField id="pistonDishCc" label="Piston Dish (positive)" unit="cc" value={pistonDishCc} min={0} max={50} step={0.1} error={validation.errors.find(e => e.includes('dish'))} placeholder="e.g., 5" />
+        <NumberField id="pistonDomeCc" label="Piston Dome (positive)" unit="cc" value={pistonDomeCc} min={0} max={50} step={0.1} error={validation.errors.find(e => e.includes('dome'))} placeholder="e.g., 0" />
       </fieldset>
       <fieldset>
         <legend>Head Gasket & Deck</legend>

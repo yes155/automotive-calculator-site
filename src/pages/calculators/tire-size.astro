@@ -43,15 +43,15 @@ const verdictClass = verdict === 'ok' ? 'verdict-ok' : verdict === 'caution' ? '
     <form method="GET" slot="inputs" novalidate data-calculator="tire-size">
       <fieldset>
         <legend>Tire A (Current / Reference)</legend>
-        <NumberField id="tireAWidth" label="Section Width (mm)" value={tireAWidth} min={155} max={400} step={5} error={validation.errors.find(e => e.includes('Tire A width'))} warning={validation.warnings.find(w => w.includes('Tire A width'))} placeholder="e.g., 225" />
-        <NumberField id="tireAAspect" label="Aspect Ratio (%)" value={tireAAspect} min={25} max={85} step={5} error={validation.errors.find(e => e.includes('Tire A aspect'))} warning={validation.warnings.find(w => w.includes('Tire A aspect'))} placeholder="e.g., 45" />
-        <NumberField id="tireARim" label="Rim Diameter (inches)" value={tireARim} min={13} max={24} step={1} error={validation.errors.find(e => e.includes('Tire A rim'))} warning={validation.warnings.find(w => w.includes('Tire A rim'))} placeholder="e.g., 17" />
+        <NumberField id="tireAWidth" label="Section Width" unit="mm" value={tireAWidth} min={155} max={400} step={5} error={validation.errors.find(e => e.includes('Tire A width'))} warning={validation.warnings.find(w => w.includes('Tire A width'))} placeholder="e.g., 225" />
+        <NumberField id="tireAAspect" label="Aspect Ratio" unit="%" value={tireAAspect} min={25} max={85} step={5} error={validation.errors.find(e => e.includes('Tire A aspect'))} warning={validation.warnings.find(w => w.includes('Tire A aspect'))} placeholder="e.g., 45" />
+        <NumberField id="tireARim" label="Rim Diameter" unit="inches" value={tireARim} min={13} max={24} step={1} error={validation.errors.find(e => e.includes('Tire A rim'))} warning={validation.warnings.find(w => w.includes('Tire A rim'))} placeholder="e.g., 17" />
       </fieldset>
       <fieldset>
         <legend>Tire B (Proposed / Comparison)</legend>
-        <NumberField id="tireBWidth" label="Section Width (mm)" value={tireBWidth} min={155} max={400} step={5} error={validation.errors.find(e => e.includes('Tire B width'))} warning={validation.warnings.find(w => w.includes('Tire B width'))} placeholder="e.g., 235" />
-        <NumberField id="tireBAspect" label="Aspect Ratio (%)" value={tireBAspect} min={25} max={85} step={5} error={validation.errors.find(e => e.includes('Tire B aspect'))} warning={validation.warnings.find(w => w.includes('Tire B aspect'))} placeholder="e.g., 40" />
-        <NumberField id="tireBRim" label="Rim Diameter (inches)" value={tireBRim} min={13} max={24} step={1} error={validation.errors.find(e => e.includes('Tire B rim'))} warning={validation.warnings.find(w => w.includes('Tire B rim'))} placeholder="e.g., 18" />
+        <NumberField id="tireBWidth" label="Section Width" unit="mm" value={tireBWidth} min={155} max={400} step={5} error={validation.errors.find(e => e.includes('Tire B width'))} warning={validation.warnings.find(w => w.includes('Tire B width'))} placeholder="e.g., 235" />
+        <NumberField id="tireBAspect" label="Aspect Ratio" unit="%" value={tireBAspect} min={25} max={85} step={5} error={validation.errors.find(e => e.includes('Tire B aspect'))} warning={validation.warnings.find(w => w.includes('Tire B aspect'))} placeholder="e.g., 40" />
+        <NumberField id="tireBRim" label="Rim Diameter" unit="inches" value={tireBRim} min={13} max={24} step={1} error={validation.errors.find(e => e.includes('Tire B rim'))} warning={validation.warnings.find(w => w.includes('Tire B rim'))} placeholder="e.g., 18" />
       </fieldset>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Calculate</button>

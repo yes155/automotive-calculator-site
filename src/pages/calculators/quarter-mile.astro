@@ -23,13 +23,13 @@ const canonical = '/calculators/quarter-mile/';
       <fieldset>
         <legend>Vehicle Specs</legend>
         <div class="weight-group">
-          <NumberField id="weight" label="Vehicle Weight" value={weight} min={1000} max={10000} step={10} error={validation.errors.find(e => e.includes('Vehicle weight'))} placeholder="e.g., 3500" />
+          <NumberField id="weight" label="Vehicle Weight" unit="lb" value={weight} min={1000} max={10000} step={10} error={validation.errors.find(e => e.includes('Vehicle weight'))} placeholder="e.g., 3500" />
           <select aria-label="Weight unit" id="weightUnit" name="weightUnit" class="unit-select">
             <option value="lb" selected={weightUnit === 'lb'}>lb</option>
             <option value="kg" selected={weightUnit === 'kg'}>kg</option>
           </select>
         </div>
-        <NumberField id="horsepower" label="Horsepower" value={horsepower} min={50} max={2000} step={1} error={validation.errors.find(e => e.includes('Horsepower'))} placeholder="e.g., 400" />
+        <NumberField id="horsepower" label="Horsepower" unit="hp" value={horsepower} min={50} max={2000} step={1} error={validation.errors.find(e => e.includes('Horsepower'))} placeholder="e.g., 400" />
         <select aria-label="Power measurement basis" id="powerType" name="powerType" class="unit-select">
           <option value="crank" selected={powerType === 'crank'}>Crank HP</option>
           <option value="wheel" selected={powerType === 'wheel'}>Wheel HP</option>

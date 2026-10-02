@@ -23,7 +23,7 @@ const canonical = '/calculators/power-to-weight/';
       <fieldset>
         <legend>Power</legend>
         <div class="unit-group">
-          <NumberField id="power" label="Power" value={power} min={1} max={5000} step={1} error={validation.errors.find(e => e.includes('Power'))} placeholder="e.g., 300" />
+          <NumberField id="power" label="Power" unit="hp" value={power} min={1} max={5000} step={1} error={validation.errors.find(e => e.includes('Power'))} placeholder="e.g., 300" />
           <select aria-label="Power unit" id="powerUnit" name="powerUnit" class="unit-select">
             <option value="hp" selected={powerUnit === 'hp'}>hp</option>
             <option value="kw" selected={powerUnit === 'kw'}>kW</option>
@@ -33,7 +33,7 @@ const canonical = '/calculators/power-to-weight/';
       <fieldset>
         <legend>Weight</legend>
         <div class="unit-group">
-          <NumberField id="weight" label="Weight" value={weight} min={500} max={10000} step={10} error={validation.errors.find(e => e.includes('Weight'))} placeholder="e.g., 3000" />
+          <NumberField id="weight" label="Weight" unit="lb" value={weight} min={500} max={10000} step={10} error={validation.errors.find(e => e.includes('Weight'))} placeholder="e.g., 3000" />
           <select aria-label="Weight unit" id="weightUnit" name="weightUnit" class="unit-select">
             <option value="lb" selected={weightUnit === 'lb'}>lb</option>
             <option value="kg" selected={weightUnit === 'kg'}>kg</option>

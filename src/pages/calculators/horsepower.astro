@@ -22,13 +22,13 @@ const canonical = '/calculators/horsepower/';
       <fieldset>
         <legend>Inputs</legend>
         <div class="torque-group">
-          <NumberField id="torque" label="Torque" value={torque} min={0} max={2000} step={1} error={validation.errors.find(e => e.includes('Torque'))} placeholder="e.g., 400" />
+          <NumberField id="torque" label="Torque" unit="lb-ft" value={torque} min={0} max={2000} step={1} error={validation.errors.find(e => e.includes('Torque'))} placeholder="e.g., 400" />
           <select aria-label="Torque unit" id="torqueUnit" name="torqueUnit" class="unit-select">
             <option value="lb-ft" selected={torqueUnit === 'lb-ft'}>lb-ft</option>
             <option value="nm" selected={torqueUnit === 'nm'}>N·m</option>
           </select>
         </div>
-        <NumberField id="rpm" label="RPM" value={rpm} min={0} max={15000} step={10} error={validation.errors.find(e => e.includes('RPM'))} placeholder="e.g., 6000" />
+        <NumberField id="rpm" label="Engine Speed" unit="RPM" value={rpm} min={0} max={15000} step={10} error={validation.errors.find(e => e.includes('RPM'))} placeholder="e.g., 6000" />
       </fieldset>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Calculate</button>

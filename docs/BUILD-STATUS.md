@@ -29,6 +29,7 @@ The other documents preserve the supplied planning handoff. Their phase descript
 - Tire Size already exists and stays available; its research priority does not require removing a working tool.
 - Current input ranges remain intentional UI constraints, including wheel width 3–20 inches. Changing these accepted bounds requires a product decision.
 - The existing visual system remains while the separate Stitch design work proceeds. The older light-first handoff has not triggered an automatic redesign.
+- The primary audience is the United States. Power, weight and torque defaults use hp, lb and lb-ft. Wheel widths and rim diameters use inches; tire section width and ET retain their labeled millimeter conventions. Engine dimensions support inches and millimeters. Input directions, US number formatting, persistent range/increment hints, and decimal duty-cycle examples are shown before entry. Hints update with converted units and are connected to inputs through accessible descriptions.
 
 ## Remaining launch work
 
@@ -42,7 +43,7 @@ The other documents preserve the supplied planning handoff. Their phase descript
 
 - Clean `npm ci` succeeded.
 - 168 Vitest tests passed across 13 files.
-- 71 Chromium Playwright tests passed, including all 22 pages at 320px, local links/fragments, deployed-origin metadata, URL input restoration and reset recovery.
+- 76 Chromium Playwright tests passed, including all 22 pages at 320px, local links/fragments, deployed-origin metadata, URL input restoration and reset recovery, plus persistent input limits, unit conversion hints and static directions without JavaScript.
 - The static build succeeded. A separate unconfigured build verified noindex, no fabricated canonical, disallow robots and an empty sitemap.
 - Desktop and mobile Wheel Offset screenshots were inspected.
 - `63360` remains only as an inches-per-mile constant and a displayed formula whose circumference is in inches. No page uses `is:inline`.
