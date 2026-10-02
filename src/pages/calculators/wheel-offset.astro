@@ -21,7 +21,7 @@ const canonical = '/calculators/wheel-offset/';
 
 <Layout title="Wheel Offset Calculator" description="Compare your current wheel with a proposed wheel to see how inner clearance and outer poke change. Enter width (inches) and offset ET (mm) for both wheels." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Wheel Offset Calculator', url: '/calculators/wheel-offset/' }]}>
   <CalculatorShell title="Wheel Offset Calculator" description="Compare a current wheel with a proposed wheel and see how far the inner and outer edges move. Enter width (inches) and offset ET (mm) for both wheels." calculatorId="wheel-offset">
-    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="wheel-offset">
+    <form method="GET" slot="inputs" novalidate data-calculator="wheel-offset">
       <fieldset>
         <legend>Current Wheel</legend>
         <NumberField id="currentWidthIn" label="Wheel Width" unit="inches" value={currentWidthIn} min={3} max={20} step={0.5} error={validation.errors.find(e => e.includes('Current wheel width'))} warning={validation.warnings.find(w => w.includes('Current wheel width'))} placeholder="e.g., 8" />
@@ -110,29 +110,60 @@ outer_poke_change = new_outer_position - old_outer_position`}
   </CalculatorShell>
 </Layout>
 
-<script is:inline>
-  function calculateWheelOffsetClient(cW, cO, nW, nO) {
-    var INCH_TO_MM = 25.4;
-    var oldHalf = (cW * INCH_TO_MM) / 2;
-    var newHalf = (nW * INCH_TO_MM) / 2;
-    var oldInner = oldHalf + cO;
-    var oldOuter = oldHalf - cO;
-    var newInner = newHalf + nO;
-    var newOuter = newHalf - nO;
-    var innerChange = oldInner - newInner;
-    var outerChange = newOuter - oldOuter;
-    return { oldInnerPositionMm: oldInner, oldOuterPositionMm: oldOuter, newInnerPositionMm: newInner, newOuterPositionMm: newOuter, innerClearanceChangeMm: innerChange, outerPokeChangeMm: outerChange };
-  }
-  const form = document.querySelector('form[data-calculator="wheel-offset"]');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const r = calculateWheelOffset(parseFloat(fd.get('currentWidthIn')), parseFloat(fd.get('currentOffsetMm')), parseFloat(fd.get('newWidthIn')), parseFloat(fd.get('newOffsetMm')));
-      const panel = document.querySelector('.result-panel');
-      if (panel) {
-        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.interpretation}</span><span class="result-label">Summary</span></div><dl class="result-secondary"><div class="result-row"><dt>Inner Clearance Change</dt><dd>${r.innerClearanceChangeMm > 0 ? '+' : ''}${r.innerClearanceChangeMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>Outer Poke Change</dt><dd>${r.outerPokeChangeMm > 0 ? '+' : ''}${r.outerPokeChangeMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>Old Inner Position</dt><dd>${r.oldInnerPositionMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>Old Outer Position</dt><dd>${r.oldOuterPositionMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>New Inner Position</dt><dd>${r.newInnerPositionMm.toFixed(1)} mm</dd></div><div class="result-row"><dt>New Outer Position</dt><dd>${r.newOuterPositionMm.toFixed(1)} mm</dd></div></dl>`;
+<script>
+  import { calculateWheelOffset, validateWheelOffset } from '../../lib/calculators/wheelOffset';
+
+  const form = document.querySelector<HTMLFormElement>('form[data-calculator="wheel-offset"]');
+  const panel = document.querySelector<HTMLElement>('.result-panel');
+  if (form && panel) {
+    const message = document.createElement('p');
+    message.setAttribute('role', 'alert');
+    message.style.color = 'var(--error)';
+    message.hidden = true;
+    form.append(message);
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      message.hidden = true;
+      message.textContent = '';
+      const fields = [...form.querySelectorAll<HTMLInputElement>('input[type="number"]')];
+      const invalid = fields.filter(field => field.value.trim() === '' || !Number.isFinite(field.valueAsNumber) || !field.checkValidity());
+      fields.forEach(field => field.setAttribute('aria-invalid', invalid.includes(field) ? 'true' : 'false'));
+      if (invalid.length) {
+        message.textContent = 'Enter valid numbers within the allowed ranges for all four fields.';
+        message.hidden = false;
+        panel.hidden = true;
+        invalid[0].focus();
+        return;
       }
+
+      const data = new FormData(form);
+      const input = {
+        currentWidthIn: Number(data.get('currentWidthIn')),
+        currentOffsetMm: Number(data.get('currentOffsetMm')),
+        newWidthIn: Number(data.get('newWidthIn')),
+        newOffsetMm: Number(data.get('newOffsetMm')),
+      };
+      const validation = validateWheelOffset(input);
+      if (!validation.valid) {
+        message.textContent = validation.errors.join(' ');
+        message.hidden = false;
+        panel.hidden = true;
+        return;
+      }
+      const result = calculateWheelOffset(input);
+      const summary = panel.querySelector('.result-value');
+      if (summary) summary.textContent = result.interpretation;
+      const values = [
+        `${result.innerClearanceChangeMm > 0 ? '+' : ''}${result.innerClearanceChangeMm.toFixed(1)} mm`,
+        `${result.outerPokeChangeMm > 0 ? '+' : ''}${result.outerPokeChangeMm.toFixed(1)} mm`,
+        `${result.oldInnerPositionMm.toFixed(1)} mm`,
+        `${result.oldOuterPositionMm.toFixed(1)} mm`,
+        `${result.newInnerPositionMm.toFixed(1)} mm`,
+        `${result.newOuterPositionMm.toFixed(1)} mm`,
+      ];
+      panel.querySelectorAll('.result-row dd').forEach((cell, index) => { cell.textContent = values[index]; });
+      panel.hidden = false;
     });
   }
 </script>

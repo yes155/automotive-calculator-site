@@ -33,12 +33,13 @@ export function calculateWheelOffset(input: WheelOffsetInput): WheelOffsetResult
   const innerClearanceChange = oldInnerPosition - newInnerPosition;
   const outerPokeChange = newOuterPosition - oldOuterPosition;
   
-  const innerDirection = innerClearanceChange > 0 ? 'away from' : 'closer to';
-  const outerDirection = outerPokeChange > 0 ? 'farther outward' : 'inward';
-  
-  const interpretation = 
-    `New wheel moves ${Math.abs(innerClearanceChange).toFixed(1)} mm ${innerDirection} the suspension ` +
-    `and ${Math.abs(outerPokeChange).toFixed(1)} mm ${outerDirection} toward the fender.`;
+  const innerDescription = innerClearanceChange === 0
+    ? 'Inner edge unchanged'
+    : `Inner edge moves ${Math.abs(innerClearanceChange).toFixed(1)} mm ${innerClearanceChange > 0 ? 'away from' : 'closer to'} the suspension`;
+  const outerDescription = outerPokeChange === 0
+    ? 'outer edge unchanged'
+    : `outer edge moves ${Math.abs(outerPokeChange).toFixed(1)} mm ${outerPokeChange > 0 ? 'outward toward' : 'inward away from'} the fender`;
+  const interpretation = `${innerDescription}; ${outerDescription}.`;
   
   return {
     oldInnerPositionMm: oldInnerPosition,
