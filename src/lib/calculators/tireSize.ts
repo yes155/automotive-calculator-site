@@ -35,6 +35,11 @@ export interface TireSizeResult {
     groundClearanceChangeMm: number;
     speedometerErrorPct: number;
     speedometerReadingAt60: number;
+    speedometerReadingAt30: number;
+    speedometerReadingAt45: number;
+    speedometerReadingAt70: number;
+    speedometerReadingAt80: number;
+    verdict: 'ok' | 'caution' | 'not_recommended';
   };
   interpretation: string;
 }
@@ -67,6 +72,11 @@ export function calculateTireSize(input: TireSizeInput): TireSizeResult {
   
   const speedometerErrorPct = (tireADiameterMm / tireBDiameterMm - 1) * 100;
   const speedometerReadingAt60 = 60 * (tireBDiameterMm / tireADiameterMm);
+  const speedometerReadingAt30 = 30 * (tireBDiameterMm / tireADiameterMm);
+  const speedometerReadingAt45 = 45 * (tireBDiameterMm / tireADiameterMm);
+  const speedometerReadingAt70 = 70 * (tireBDiameterMm / tireADiameterMm);
+  const speedometerReadingAt80 = 80 * (tireBDiameterMm / tireADiameterMm);
+  const verdict = Math.abs(diameterDiffPct) <= 3 ? 'ok' : Math.abs(diameterDiffPct) <= 5 ? 'caution' : 'not_recommended';
   
   const interpretation = 
     `Tire B is ${Math.abs(diameterDiffMm).toFixed(1)} mm (${Math.abs(diameterDiffPct).toFixed(1)}%) ` +
@@ -101,6 +111,11 @@ export function calculateTireSize(input: TireSizeInput): TireSizeResult {
       groundClearanceChangeMm,
       speedometerErrorPct,
       speedometerReadingAt60,
+      speedometerReadingAt30,
+      speedometerReadingAt45,
+      speedometerReadingAt70,
+      speedometerReadingAt80,
+      verdict,
     },
     interpretation,
   };

@@ -1,42 +1,22 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  testMatch: '**/*.spec.ts',
+  workers: 2,
+  reporter: 'list',
+  outputDir: 'test-results',
   use: {
-    baseURL: 'http://localhost:4321',
-    trace: 'on-first-retry',
+    browserName: 'chromium',
+    baseURL: 'http://127.0.0.1:4323',
+    launchOptions: process.env.CHROMIUM_EXECUTABLE_PATH ? {
+      executablePath: process.env.CHROMIUM_EXECUTABLE_PATH,
+      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    } : {},
   },
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:4321',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    command: 'npm run build && node scripts/serve-built.mjs',
+    url: 'http://127.0.0.1:4323',
+    reuseExistingServer: false,
   },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    },
-  ],
 });

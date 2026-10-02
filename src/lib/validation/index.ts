@@ -8,7 +8,7 @@ export function validatePositive(value: number, fieldName: string): ValidationRe
   const errors: string[] = [];
   const warnings: string[] = [];
   
-  if (value <= 0) {
+  if (!Number.isFinite(value) || value <= 0) {
     errors.push(`${fieldName} must be greater than zero`);
   }
   
@@ -19,7 +19,7 @@ export function validateNonNegative(value: number, fieldName: string): Validatio
   const errors: string[] = [];
   const warnings: string[] = [];
   
-  if (value < 0) {
+  if (!Number.isFinite(value) || value < 0) {
     errors.push(`${fieldName} cannot be negative`);
   }
   
@@ -37,7 +37,7 @@ export function validateRange(
   const errors: string[] = [];
   const warnings: string[] = [];
   
-  if (value < min || value > max) {
+  if (!Number.isFinite(value) || value < min || value > max) {
     errors.push(`${fieldName} must be between ${min} and ${max}`);
   }
   

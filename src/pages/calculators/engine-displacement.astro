@@ -20,7 +20,7 @@ const canonical = '/calculators/engine-displacement/';
 
 <Layout title="Engine Displacement Calculator" description="Calculate engine displacement in cc, liters, and cubic inches from bore, stroke, and cylinder count. Also shows bore/stroke ratio and geometry classification." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Engine Displacement Calculator', url: '/calculators/engine-displacement/' }]}>
   <CalculatorShell title="Engine Displacement Calculator" description="Calculate displacement from bore, stroke, and cylinder count. Results in cc, liters, cubic inches, per-cylinder volume, and bore/stroke ratio with geometry classification." calculatorId="engine-displacement">
-    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="engine-displacement">
+    <form method="GET" slot="inputs" novalidate data-calculator="engine-displacement">
       <fieldset>
         <legend>Engine Geometry</legend>
         <NumberField id="bore" label="Bore" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={bore} min={50} max={200} step={unitSystem === 'mm' ? 0.1 : 0.001} error={validation.errors.find(e => e.includes('Bore'))} placeholder={unitSystem === 'mm' ? 'e.g., 86' : 'e.g., 3.386'} />
@@ -28,8 +28,8 @@ const canonical = '/calculators/engine-displacement/';
         <NumberField id="cylinders" label="Cylinders" value={cylinders} min={1} max={16} step={1} error={validation.errors.find(e => e.includes('Cylinders'))} placeholder="e.g., 4" />
       </fieldset>
       <div class="form-actions">
-        <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>mm</span></label>
-        <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>inches</span></label>
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} /><span>mm</span></label>
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} /><span>inches</span></label>
         <button type="submit" class="btn-primary">Calculate</button>
         <a href="/calculators/engine-displacement/" class="btn-secondary">Reset</a>
       </div>
@@ -82,29 +82,8 @@ const canonical = '/calculators/engine-displacement/';
   </CalculatorShell>
 </Layout>
 
-<script is:inline>
-  function calculateEngineDisplacementClient(bore, stroke, cylinders, unit) {
-    var INCH_TO_MM = 25.4;
-    var toMm = function(v) { return unit === 'in' ? v * INCH_TO_MM : v; };
-    var bMm = toMm(bore), sMm = toMm(stroke);
-    var perCyl = (Math.PI / 4) * bMm * bMm * sMm / 1000;
-    var total = perCyl * cylinders;
-    var ratio = bMm / sMm;
-    var desc = ratio > 1.05 ? 'Oversquare (bore > stroke)' : ratio < 0.95 ? 'Undersquare (stroke > bore)' : 'Square (bore ≈ stroke)';
-    return { totalDisplacementCc: total, totalDisplacementL: total / 1000, totalDisplacementCi: total / 16.387064, perCylinderCc: perCyl, boreStrokeRatio: ratio, geometryDescription: desc };
-  }
-  const form = document.querySelector('form[data-calculator="engine-displacement"]');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const r = calculateEngineDisplacement(parseFloat(fd.get('bore')), parseFloat(fd.get('stroke')), parseInt(fd.get('cylinders')), fd.get('unitSystem') as 'mm' | 'in');
-      const panel = document.querySelector('.result-panel');
-      if (panel) {
-        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.totalDisplacementCc.toFixed(0)} cc (${r.totalDisplacementL.toFixed(2)} L, ${r.totalDisplacementCi.toFixed(1)} cu in)</span><span class="result-label">Total Displacement</span></div><dl class="result-secondary"><div class="result-row"><dt>Per Cylinder</dt><dd>${r.perCylinderCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Bore/Stroke Ratio</dt><dd>${r.boreStrokeRatio.toFixed(2)}</dd></div><div class="result-row"><dt>Geometry</dt><dd>${r.geometryDescription}</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
-      }
-    });
-  }
+<script>
+  import '../../lib/calculatorClients';
 </script>
 
 <style>

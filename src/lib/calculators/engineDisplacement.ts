@@ -1,5 +1,5 @@
 import { PI_OVER_4 } from '../units/index.ts';
-import { validatePositive, validateNonNegative, mergeValidations } from '../validation/index.ts';
+import { validatePositive, validateInteger, mergeValidations } from '../validation/index.ts';
 
 export interface EngineDisplacementInput {
   bore: number;
@@ -69,7 +69,7 @@ export function validateEngineDisplacement(input: EngineDisplacementInput) {
     validatePositive(input.bore, 'Bore'),
     validatePositive(input.stroke, 'Stroke'),
     validatePositive(input.cylinders, 'Cylinders'),
-    validateNonNegative(input.cylinders, 'Cylinders'),
+    validateInteger(input.cylinders, 'Cylinders'),
   ];
   
   return mergeValidations(...validations);

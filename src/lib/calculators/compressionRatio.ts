@@ -84,6 +84,11 @@ export function validateCompressionRatio(input: CompressionRatioInput) {
     validateNonNegative(input.gasketThickness, 'Gasket thickness'),
     validateNonNegative(input.deckClearance, 'Deck clearance'),
   ];
-  
+  const boreMm = toMm(input.bore, input.unitSystem);
+  const gasketBoreMm = toMm(input.gasketBore, input.unitSystem);
+  const clearance = input.chamberCc + input.pistonDishCc - input.pistonDomeCc
+    + PI_OVER_4 * gasketBoreMm ** 2 * toMm(input.gasketThickness, input.unitSystem) / 1000
+    + PI_OVER_4 * boreMm ** 2 * toMm(input.deckClearance, input.unitSystem) / 1000;
+  validations.push(validatePositive(clearance, 'Total clearance volume'));
   return mergeValidations(...validations);
 }

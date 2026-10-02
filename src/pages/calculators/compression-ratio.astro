@@ -26,7 +26,7 @@ const canonical = '/calculators/compression-ratio/';
 
 <Layout title="Compression Ratio Calculator" description="Calculate static compression ratio from bore, stroke, chamber volume, piston dish/dome, head gasket, and deck clearance." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Compression Ratio Calculator', url: '/calculators/compression-ratio/' }]}>
   <CalculatorShell title="Compression Ratio Calculator" description="Calculate static compression ratio with component volume breakdown. Enter bore, stroke, combustion chamber volume, piston dish/dome volumes, head gasket specs, and deck clearance." calculatorId="compression-ratio">
-    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="compression-ratio">
+    <form method="GET" slot="inputs" novalidate data-calculator="compression-ratio">
       <fieldset>
         <legend>Engine Geometry</legend>
         <NumberField id="bore" label="Bore" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={bore} min={50} max={150} step={unitSystem === 'mm' ? 0.1 : 0.001} error={validation.errors.find(e => e.includes('Bore'))} placeholder={unitSystem === 'mm' ? 'e.g., 86' : 'e.g., 3.386'} />
@@ -45,8 +45,8 @@ const canonical = '/calculators/compression-ratio/';
         <NumberField id="deckClearance" label="Deck Clearance" unit={unitSystem === 'mm' ? 'mm' : 'in'} value={deckClearance} min={0} max={5} step={unitSystem === 'mm' ? 0.01 : 0.001} error={validation.errors.find(e => e.includes('Deck clearance'))} placeholder={unitSystem === 'mm' ? 'e.g., 0.5' : 'e.g., 0.02'} />
       </fieldset>
       <div class="form-actions">
-        <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>mm</span></label>
-        <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} onchange="this.form.querySelector('button[type=submit]').click()" /><span>inches</span></label>
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} /><span>mm</span></label>
+        <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} /><span>inches</span></label>
         <button type="submit" class="btn-primary">Calculate</button>
         <a href="/calculators/compression-ratio/" class="btn-secondary">Reset</a>
       </div>
@@ -99,20 +99,8 @@ const canonical = '/calculators/compression-ratio/';
   </CalculatorShell>
 </Layout>
 
-<script is:inline>
-  import { calculateCompressionRatio } from '../../lib/calculators/client.ts';
-  const form = document.querySelector('form[data-calculator="compression-ratio"]');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const r = calculateCompressionRatio(parseFloat(fd.get('bore')), parseFloat(fd.get('stroke')), parseFloat(fd.get('chamberCc')), parseFloat(fd.get('pistonDishCc')), parseFloat(fd.get('pistonDomeCc')), parseFloat(fd.get('gasketBore')), parseFloat(fd.get('gasketThickness')), parseFloat(fd.get('deckClearance')), fd.get('unitSystem') as 'mm' | 'in');
-      const panel = document.querySelector('.result-panel');
-      if (panel) {
-        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.compressionRatio.toFixed(2)}:1</span><span class="result-label">Static Compression Ratio</span></div><dl class="result-secondary"><div class="result-row"><dt>Swept Volume / Cylinder</dt><dd>${r.sweptVolumeCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Total Clearance Volume</dt><dd>${r.totalClearanceVolumeCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Chamber Volume</dt><dd>${r.componentVolumes.chamberCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Gasket Volume</dt><dd>${r.componentVolumes.gasketCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Deck Volume</dt><dd>${r.componentVolumes.deckCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Piston Dish</dt><dd>${r.componentVolumes.dishCc.toFixed(1)} cc</dd></div><div class="result-row"><dt>Piston Dome</dt><dd>${r.componentVolumes.domeCc.toFixed(1)} cc</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
-      }
-    });
-  }
+<script>
+  import '../../lib/calculatorClients';
 </script>
 
 <style>

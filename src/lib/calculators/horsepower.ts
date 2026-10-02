@@ -42,7 +42,7 @@ export function calculateHorsepower(input: HorsepowerInput): HorsepowerResult {
 
 export function validateHorsepower(input: HorsepowerInput) {
   const validations = [
-    validatePositive(input.torque, 'Torque'),
+    validateNonNegative(input.torque, 'Torque'),
     validateNonNegative(input.rpm, 'RPM'),
   ];
   

@@ -20,12 +20,12 @@ const canonical = '/calculators/power-to-weight/';
 
 <Layout title="Power-to-Weight Ratio Calculator" description="Calculate power-to-weight ratio in multiple units: hp/lb, hp/ton, kW/kg, W/kg, and inverse ratios. Supports hp/kW and lb/kg inputs." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Power-to-Weight Ratio Calculator', url: '/calculators/power-to-weight/' }]}>
   <CalculatorShell title="Power-to-Weight Ratio Calculator" description="Calculate power-to-weight ratio in multiple units. Enter power (hp or kW) and weight (lb or kg) — get hp/lb, hp/ton, kW/kg, W/kg, and inverse ratios." calculatorId="power-to-weight">
-    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="power-to-weight">
+    <form method="GET" slot="inputs" novalidate data-calculator="power-to-weight">
       <fieldset>
         <legend>Power</legend>
         <div class="unit-group">
           <NumberField id="power" label="Power" value={power} min={1} max={5000} step={1} error={validation.errors.find(e => e.includes('Power'))} placeholder="e.g., 300" />
-          <select id="powerUnit" name="powerUnit" class="unit-select" onchange="this.form.querySelector('button[type=submit]').click()">
+          <select aria-label="Power unit" id="powerUnit" name="powerUnit" class="unit-select">
             <option value="hp" selected={powerUnit === 'hp'}>hp</option>
             <option value="kw" selected={powerUnit === 'kw'}>kW</option>
           </select>
@@ -35,7 +35,7 @@ const canonical = '/calculators/power-to-weight/';
         <legend>Weight</legend>
         <div class="unit-group">
           <NumberField id="weight" label="Weight" value={weight} min={500} max={10000} step={10} error={validation.errors.find(e => e.includes('Weight'))} placeholder="e.g., 3000" />
-          <select id="weightUnit" name="weightUnit" class="unit-select" onchange="this.form.querySelector('button[type=submit]').click()">
+          <select aria-label="Weight unit" id="weightUnit" name="weightUnit" class="unit-select">
             <option value="lb" selected={weightUnit === 'lb'}>lb</option>
             <option value="kg" selected={weightUnit === 'kg'}>kg</option>
           </select>
@@ -99,20 +99,8 @@ const canonical = '/calculators/power-to-weight/';
   </CalculatorShell>
 </Layout>
 
-<script is:inline>
-  import { calculatePowerToWeight } from '../../lib/calculators/client.ts';
-  const form = document.querySelector('form[data-calculator="power-to-weight"]');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const r = calculatePowerToWeight(parseFloat(fd.get('power')), fd.get('powerUnit') as 'hp' | 'kw', parseFloat(fd.get('weight')), fd.get('weightUnit') as 'lb' | 'kg');
-      const panel = document.querySelector('.result-panel');
-      if (panel) {
-        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.hpPerLb.toFixed(4)} hp/lb</span><span class="result-label">Power-to-Weight</span></div><dl class="result-secondary"><div class="result-row"><dt>hp per US Ton</dt><dd>${r.hpPerTon.toFixed(0)}</dd></div><div class="result-row"><dt>kW/kg</dt><dd>${r.kwPerKg.toFixed(3)}</dd></div><div class="result-row"><dt>W/kg</dt><dd>${r.wPerKg.toFixed(0)}</dd></div><div class="result-row"><dt>lb/hp</dt><dd>${r.lbPerHp.toFixed(2)}</dd></div><div class="result-row"><dt>kg/kW</dt><dd>${r.kgPerKw.toFixed(2)}</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
-      }
-    });
-  }
+<script>
+  import '../../lib/calculatorClients';
 </script>
 
 <style>

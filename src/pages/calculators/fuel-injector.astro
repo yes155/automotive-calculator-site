@@ -21,7 +21,7 @@ const canonical = '/calculators/fuel-injector/';
 
 <Layout title="Fuel Injector Calculator" description="Calculate required fuel injector flow in lb/hr and cc/min from target horsepower, BSFC, injector count, duty cycle, and fuel density." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Fuel Injector Calculator', url: '/calculators/fuel-injector/' }]}>
   <CalculatorShell title="Fuel Injector Calculator" description="Estimate required injector flow (lb/hr and cc/min per injector) from target horsepower, BSFC, number of injectors, max duty cycle, and fuel density." calculatorId="fuel-injector">
-    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="fuel-injector">
+    <form method="GET" slot="inputs" novalidate data-calculator="fuel-injector">
       <fieldset>
         <legend>Engine & Fuel</legend>
         <NumberField id="horsepower" label="Target Horsepower" value={horsepower} min={50} max={2000} step={1} error={validation.errors.find(e => e.includes('Horsepower'))} placeholder="e.g., 400" />
@@ -88,20 +88,8 @@ const canonical = '/calculators/fuel-injector/';
   </CalculatorShell>
 </Layout>
 
-<script is:inline>
-  import { calculateFuelInjector } from '../../lib/calculators/client.ts';
-  const form = document.querySelector('form[data-calculator="fuel-injector"]');
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const r = calculateFuelInjector(parseFloat(fd.get('horsepower')), parseFloat(fd.get('bsfc')), parseInt(fd.get('injectorCount')), parseFloat(fd.get('dutyCycle')), parseFloat(fd.get('fuelDensity')));
-      const panel = document.querySelector('.result-panel');
-      if (panel) {
-        panel.innerHTML = `<div class="result-primary"><span class="result-value">${r.perInjectorCcMin.toFixed(0)} cc/min (${r.perInjectorLbHr.toFixed(1)} lb/hr)</span><span class="result-label">Per Injector Flow</span></div><dl class="result-secondary"><div class="result-row"><dt>Total Fuel Flow</dt><dd>${r.totalLbHr.toFixed(1)} lb/hr (${r.totalCcMin.toFixed(0)} cc/min)</dd></div><div class="result-row"><dt>Per Injector (lb/hr)</dt><dd>${r.perInjectorLbHr.toFixed(1)}</dd></div><div class="result-row"><dt>Injectors</dt><dd>${fd.get('injectorCount')}</dd></div><div class="result-row"><dt>Duty Cycle</dt><dd>${(parseFloat(fd.get('dutyCycle')) * 100).toFixed(0)}%</dd></div><div class="result-row"><dt>BSFC</dt><dd>${parseFloat(fd.get('bsfc')).toFixed(2)}</dd></div><div class="result-row"><dt>Fuel Density</dt><dd>${fd.get('fuelDensity')} g/mL</dd></div></dl><p class="result-interpretation">${r.interpretation}</p>`;
-      }
-    });
-  }
+<script>
+  import '../../lib/calculatorClients';
 </script>
 
 <style>

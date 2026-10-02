@@ -19,12 +19,12 @@ const validation = validateTireSize(input);
 const result = calculateTireSize(input);
 const canonical = '/calculators/tire-size/';
 
-const fmt = (n, d = 1) => {
+const fmt = (n: number, d = 1) => {
   if (!isFinite(n)) return '—';
   const f = Math.pow(10, d);
   return (Math.round(Math.abs(n) * f) / f * Math.sign(n)).toFixed(d);
 };
-const fmtSigned = (n, d = 1) => {
+const fmtSigned = (n: number, d = 1) => {
   if (!isFinite(n)) return '—';
   const v = Math.round(Math.abs(n) * Math.pow(10, d)) / Math.pow(10, d);
   return (n >= 0 ? '+' : '-') + v.toFixed(d);
@@ -41,7 +41,7 @@ const verdictClass = verdict === 'ok' ? 'verdict-ok' : verdict === 'caution' ? '
 
 <Layout title="Tire Size Calculator: Compare Diameter, Speedometer Error & Fitment" description="Compare two tire sizes: diameter, circumference, ground clearance change, and speedometer effect. Enter width, aspect ratio, and rim diameter for both tires." canonical={canonical} pageType="article" breadcrumbs={[{ name: 'Home', url: '/' }, { name: 'Calculators', url: '/calculators/' }, { name: 'Tire Size Calculator', url: '/calculators/tire-size/' }]}>
   <CalculatorShell title="Tire Size Calculator" description="Compare tire dimensions and speedometer effect. Enter section width (mm), aspect ratio (%), and wheel diameter (inches) for both tires." calculatorId="tire-size">
-    <form method="POST" enctype="application/x-www-form-urlencoded" slot="inputs" novalidate data-calculator="tire-size">
+    <form method="GET" slot="inputs" novalidate data-calculator="tire-size">
       <fieldset>
         <legend>Tire A (Current / Reference)</legend>
         <NumberField id="tireAWidth" label="Section Width (mm)" value={tireAWidth} min={155} max={400} step={5} error={validation.errors.find(e => e.includes('Tire A width'))} warning={validation.warnings.find(w => w.includes('Tire A width'))} placeholder="e.g., 225" />
@@ -60,8 +60,8 @@ const verdictClass = verdict === 'ok' ? 'verdict-ok' : verdict === 'caution' ? '
       </div>
     </form>
 
-    <div class="result-panel" role="status" aria-live="polite">
-      <div class="verdict-badge {verdictClass}">{verdictText}</div>
+    <div slot="results" class="result-panel" role="status" aria-live="polite">
+      <div class={`verdict-badge ${verdictClass}`}>{verdictText}</div>
       <div class="result-primary">
         <span class="result-value">{fmtSigned(result.comparison.diameterDiffMm)} mm ({fmtSigned(result.comparison.diameterDiffPct)}%)</span>
         <span class="result-label">Diameter Difference</span>
@@ -144,81 +144,8 @@ speedometer_error_pct = (diameter_A / diameter_B − 1) × 100`} variables={[
   </CalculatorShell>
 </Layout>
 
-<script is:inline>
-  function calculateTireSizeClient(aW, aA, aR, bW, bA, bR) {
-    var INCH_TO_MM = 25.4;
-    var aSidewall = aW * aA / 100;
-    var aDiaMm = 2 * aSidewall + aR * INCH_TO_MM;
-    var aDiaIn = aDiaMm / INCH_TO_MM;
-    var aCirc = Math.PI * aDiaMm;
-    var bSidewall = bW * bA / 100;
-    var bDiaMm = 2 * bSidewall + bR * INCH_TO_MM;
-    var bDiaIn = bDiaMm / INCH_TO_MM;
-    var bCirc = Math.PI * bDiaMm;
-    var diaDiffMm = bDiaMm - aDiaMm;
-    var diaDiffPct = (diaDiffMm / aDiaMm) * 100;
-    var circDiffMm = bCirc - aCirc;
-    var circDiffPct = (circDiffMm / aCirc) * 100;
-    var gcChange = diaDiffMm / 2;
-    var speedoErrorPct = (aDiaMm / bDiaMm - 1) * 100;
-    var speedo60 = 60 * (bDiaMm / aDiaMm);
-    var speedo30 = 30 * (bDiaMm / aDiaMm);
-    var speedo45 = 45 * (bDiaMm / aDiaMm);
-    var speedo70 = 70 * (bDiaMm / aDiaMm);
-    var speedo80 = 80 * (bDiaMm / aDiaMm);
-    var aRevsMile = 63360 / aCirc;
-    var bRevsMile = 63360 / bCirc;
-    var aRevsKm = 1000000 / aCirc;
-    var bRevsKm = 1000000 / bCirc;
-    var absPct = Math.abs(diaDiffPct);
-    var verdict = absPct <= 3 ? 'ok' : absPct <= 5 ? 'caution' : 'not_recommended';
-    return {
-      tireA: { diameterMm: aDiaMm, diameterIn: aDiaIn, circumferenceMm: aCirc, revsPerMile: aRevsMile, revsPerKm: aRevsKm },
-      tireB: { diameterMm: bDiaMm, diameterIn: bDiaIn, circumferenceMm: bCirc, revsPerMile: bRevsMile, revsPerKm: bRevsKm },
-      comparison: {
-        diameterDiffMm: diaDiffMm, diameterDiffPct: diaDiffPct,
-        circumferenceDiffMm: circDiffMm, circumferenceDiffPct: circDiffPct,
-        groundClearanceChangeMm: gcChange, speedometerErrorPct: speedoErrorPct,
-        speedometerReadingAt30: speedo30, speedometerReadingAt45: speedo45,
-        speedometerReadingAt60: speedo60, speedometerReadingAt70: speedo70,
-        speedometerReadingAt80: speedo80, verdict: verdict
-      }
-    };
-  }
-  function fmt(n, d) {
-    if (!isFinite(n)) return '—';
-    d = d || 1;
-    var f = Math.pow(10, d);
-    var v = Math.round(Math.abs(n) * f) / f;
-    return (n < 0 ? '-' : '') + v.toFixed(d);
-  }
-  function fmtSigned(n, d) {
-    if (!isFinite(n)) return '—';
-    d = d || 1;
-    var v = Math.round(Math.abs(n) * Math.pow(10, d)) / Math.pow(10, d);
-    return (n >= 0 ? '+' : '-') + v.toFixed(d);
-  }
-  var form = document.querySelector('form[data-calculator="tire-size"]');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var fd = new FormData(form);
-      var r = calculateTireSizeClient(
-        parseFloat(fd.get('tireAWidth')), parseFloat(fd.get('tireAAspect')), parseFloat(fd.get('tireARim')),
-        parseFloat(fd.get('tireBWidth')), parseFloat(fd.get('tireBAspect')), parseFloat(fd.get('tireBRim'))
-      );
-      var panel = document.querySelector('.result-panel');
-      if (panel) {
-        var speedoErr = r.comparison.speedometerErrorPct;
-        var speedo60 = r.comparison.speedometerReadingAt60;
-        var speedoLabel = 'Speedometer reads ' + Math.abs(speedoErr).toFixed(1) + '% ' + (speedoErr > 0 ? 'high' : 'low') + ': 60 shown = ' + speedo60.toFixed(1) + ' actual';
-        var verdict = r.comparison.verdict;
-        var verdictText = verdict === 'ok' ? 'Within common 3% tolerance' : verdict === 'caution' ? 'Caution: 3–5% difference' : 'Not recommended: >5% difference';
-        var verdictClass = verdict === 'ok' ? 'verdict-ok' : verdict === 'caution' ? 'verdict-warn' : 'verdict-bad';
-        panel.innerHTML = '<div class="verdict-badge ' + verdictClass + '">' + verdictText + '</div><div class="result-primary"><span class="result-value">' + fmtSigned(r.comparison.diameterDiffMm) + ' mm (' + fmtSigned(r.comparison.diameterDiffPct) + '%)</span><span class="result-label">Diameter Difference</span></div><dl class="result-secondary"><div class="result-row"><dt>Tire A Diameter</dt><dd>' + fmt(r.tireA.diameterIn, 2) + ' in (' + fmt(r.tireA.diameterMm) + ' mm)</dd></div><div class="result-row"><dt>Tire B Diameter</dt><dd>' + fmt(r.tireB.diameterIn, 2) + ' in (' + fmt(r.tireB.diameterMm) + ' mm)</dd></div><div class="result-row"><dt>Circumference Diff</dt><dd>' + fmtSigned(r.comparison.circumferenceDiffMm) + ' mm (' + fmtSigned(r.comparison.circumferenceDiffPct) + '%)</dd></div><div class="result-row"><dt>Ground Clearance</dt><dd>' + fmtSigned(r.comparison.groundClearanceChangeMm) + ' mm</dd></div><div class="result-row"><dt>Revs per Mile (A / B)</dt><dd>' + Math.round(r.tireA.revsPerMile).toLocaleString() + ' / ' + Math.round(r.tireB.revsPerMile).toLocaleString() + '</dd></div><div class="result-row"><dt>Revs per Km (A / B)</dt><dd>' + Math.round(r.tireA.revsPerKm).toLocaleString() + ' / ' + Math.round(r.tireB.revsPerKm).toLocaleString() + '</dd></div><div class="result-row"><dt>Speedometer at 60</dt><dd>' + fmt(r.comparison.speedometerReadingAt60) + ' MPH actual</dd></div><div class="result-row"><dt>Speedometer</dt><dd>' + speedoLabel + '</dd></div></dl><div class="speedo-table"><h4>Speedometer Table</h4><table><thead><tr><th>Indicated (MPH)</th><th>Actual (MPH)</th></tr></thead><tbody><tr><td>30</td><td>' + fmt(r.comparison.speedometerReadingAt30) + '</td></tr><tr><td>45</td><td>' + fmt(r.comparison.speedometerReadingAt45) + '</td></tr><tr><td>60</td><td>' + fmt(r.comparison.speedometerReadingAt60) + '</td></tr><tr><td>70</td><td>' + fmt(r.comparison.speedometerReadingAt70) + '</td></tr><tr><td>80</td><td>' + fmt(r.comparison.speedometerReadingAt80) + '</td></tr></tbody></table></div>';
-      }
-    });
-  }
+<script>
+  import '../../lib/calculatorClients';
 </script>
 
 <style>

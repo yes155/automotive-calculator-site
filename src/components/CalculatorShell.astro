@@ -49,15 +49,21 @@ const { title, description, calculatorId } = Astro.props;
   </section>
 </article>
 
-<script>
-  document.querySelectorAll('form[data-calculator]').forEach(form => {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-    });
-  });
-</script>
-
 <style>
+  :global(.calculator-field-error), :global(.calculator-error-summary) {
+    color: var(--error);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  :global(.calculator-field-error) { margin-top: 0.375rem; }
+  :global(.calculator-error-summary) {
+    padding: 1rem;
+    border: 1px solid var(--error);
+    border-radius: var(--radius-md);
+    margin: 0 0 1rem;
+  }
+  :global(.calculator-warning) { color: var(--accent); font-size: 0.85rem; }
+  :global(.field-label .field-unit) { margin-left: 0.25rem; font-weight: 400; text-transform: none; }
   .calculator-page {
     max-width: 1100px;
     margin: 0 auto;

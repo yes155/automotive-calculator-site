@@ -9,7 +9,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test calculators.smoke.spec.ts"
   },
   "dependencies": {
     "astro": "^7.3.5"

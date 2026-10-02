@@ -111,61 +111,7 @@ outer_poke_change = new_outer_position - old_outer_position`}
 </Layout>
 
 <script>
-  import { calculateWheelOffset, validateWheelOffset } from '../../lib/calculators/wheelOffset';
-
-  const form = document.querySelector<HTMLFormElement>('form[data-calculator="wheel-offset"]');
-  const panel = document.querySelector<HTMLElement>('.result-panel');
-  if (form && panel) {
-    const message = document.createElement('p');
-    message.setAttribute('role', 'alert');
-    message.style.color = 'var(--error)';
-    message.hidden = true;
-    form.append(message);
-
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      message.hidden = true;
-      message.textContent = '';
-      const fields = [...form.querySelectorAll<HTMLInputElement>('input[type="number"]')];
-      const invalid = fields.filter(field => field.value.trim() === '' || !Number.isFinite(field.valueAsNumber) || !field.checkValidity());
-      fields.forEach(field => field.setAttribute('aria-invalid', invalid.includes(field) ? 'true' : 'false'));
-      if (invalid.length) {
-        message.textContent = 'Enter valid numbers within the allowed ranges for all four fields.';
-        message.hidden = false;
-        panel.hidden = true;
-        invalid[0].focus();
-        return;
-      }
-
-      const data = new FormData(form);
-      const input = {
-        currentWidthIn: Number(data.get('currentWidthIn')),
-        currentOffsetMm: Number(data.get('currentOffsetMm')),
-        newWidthIn: Number(data.get('newWidthIn')),
-        newOffsetMm: Number(data.get('newOffsetMm')),
-      };
-      const validation = validateWheelOffset(input);
-      if (!validation.valid) {
-        message.textContent = validation.errors.join(' ');
-        message.hidden = false;
-        panel.hidden = true;
-        return;
-      }
-      const result = calculateWheelOffset(input);
-      const summary = panel.querySelector('.result-value');
-      if (summary) summary.textContent = result.interpretation;
-      const values = [
-        `${result.innerClearanceChangeMm > 0 ? '+' : ''}${result.innerClearanceChangeMm.toFixed(1)} mm`,
-        `${result.outerPokeChangeMm > 0 ? '+' : ''}${result.outerPokeChangeMm.toFixed(1)} mm`,
-        `${result.oldInnerPositionMm.toFixed(1)} mm`,
-        `${result.oldOuterPositionMm.toFixed(1)} mm`,
-        `${result.newInnerPositionMm.toFixed(1)} mm`,
-        `${result.newOuterPositionMm.toFixed(1)} mm`,
-      ];
-      panel.querySelectorAll('.result-row dd').forEach((cell, index) => { cell.textContent = values[index]; });
-      panel.hidden = false;
-    });
-  }
+  import '../../lib/calculatorClients';
 </script>
 
 <style>
