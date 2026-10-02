@@ -7,10 +7,9 @@ import FormulaBlock from '../../components/FormulaBlock.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
 import { calculateHorsepower, validateHorsepower, type HorsepowerInput } from '../../lib/calculators/horsepower.ts';
 
-const url = new URL(Astro.url);
-const torque = parseFloat(url.searchParams.get('torque') || '400');
-const torqueUnit = (url.searchParams.get('torqueUnit') as 'lb-ft' | 'nm') || 'lb-ft';
-const rpm = parseFloat(url.searchParams.get('rpm') || '6000');
+const torque = 400;
+const torqueUnit = 'lb-ft';
+const rpm = 6000;
 const input: HorsepowerInput = { torque, torqueUnit, rpm };
 const validation = validateHorsepower(input);
 const result = calculateHorsepower(input);
@@ -33,7 +32,7 @@ const canonical = '/calculators/horsepower/';
       </fieldset>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Calculate</button>
-        <a href="/calculators/horsepower/" class="btn-secondary">Reset</a>
+        <button type="reset" class="btn-secondary">Reset</button>
       </div>
     </form>
     <ResultCard slot="results" primaryValue={`${result.hp.toFixed(1)} hp (${result.kw.toFixed(1)} kW)`} primaryLabel="Power Output" secondaryValues={[
@@ -49,14 +48,14 @@ const canonical = '/calculators/horsepower/';
     ]} notes={[
       'At 5,252 RPM, torque (lb-ft) numerically equals horsepower.',
       'Calculated shaft power from torque/RPM ≠ advertised engine power unless measured at same point.',
-      '1 mechanical hp = 0.745699872 kW exactly.',
+      'Mechanical horsepower is converted using 1 hp = 0.745699872 kW.',
       '1 lb-ft = 1.35581795 N·m.',
     ]} />
     <div slot="example" class="worked-example">
       <p><strong>Example:</strong> 400 lb-ft @ 6,000 RPM</p>
       <ul>
-        <li>hp = 400 × 6000 / 5252.113 = <strong>456.9 hp</strong></li>
-        <li>kW = 456.9 × 0.7457 = <strong>340.7 kW</strong></li>
+        <li>hp = 400 × 6000 / 5252.113 = <strong>457.0 hp</strong></li>
+        <li>kW = hp × 0.745699872 = <strong>340.8 kW</strong> (using unrounded horsepower)</li>
       </ul>
       <p><strong>5252 Crossover Example:</strong> 525.2 lb-ft @ 5,252 RPM</p>
       <ul>

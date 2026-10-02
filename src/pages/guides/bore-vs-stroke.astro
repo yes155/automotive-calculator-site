@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Bore vs Stroke" description="Understanding oversquare, square, and undersquare engine geometries and their implications.">
+<Layout pageType="article" title="Bore vs Stroke" description="Understanding oversquare, square, and undersquare engine geometries and their implications.">
   <article class="guide-page">
     <header>
       <h1>Bore vs Stroke: Engine Geometry Explained</h1>
@@ -22,23 +22,20 @@ import Layout from '../../layouts/Layout.astro';
       <table class="guide-table">
         <thead><tr><th>Category</th><th>Ratio</th><th>Characteristics</th></tr></thead>
         <tbody>
-          <tr><td><strong>Oversquare</strong> (Short-stroke)</td><td>> 1.05</td><td>Bore > Stroke. Larger valves possible, lower piston speed, favors high-RPM power. Common in sport bikes, F1, motorcycle engines.</td></tr>
+          <tr><td><strong>Oversquare</strong> (Short-stroke)</td><td>> 1.05</td><td>Bore > Stroke. Larger valves possible, lower piston speed, The power curve also depends on breathing, cam timing, and operating limits.</td></tr>
           <tr><td><strong>Square</strong></td><td>~1.0 (0.95–1.05)</td><td>Bore ≈ Stroke. Balanced characteristics. Many modern production engines target near-square for efficiency.</td></tr>
-          <tr><td><strong>Undersquare</strong> (Long-stroke)</td><td>< 0.95</td><td>Stroke > Bore. Higher piston speed at given RPM, favors low-end torque, better thermal efficiency. Common in diesel, truck, and older pushrod V8s.</td></tr>
+          <tr><td><strong>Undersquare</strong> (Long-stroke)</td><td>< 0.95</td><td>Stroke > Bore. Higher piston speed at given RPM, The ratio alone does not establish torque output or thermal efficiency.</td></tr>
         </tbody>
       </table>
     </section>
     <section>
-      <h2>Common Examples</h2>
+      <h2>Geometry Examples</h2>
       <table class="guide-table">
-        <thead><tr><th>Engine</th><th>Bore (mm)</th><th>Stroke (mm)</th><th>Ratio</th><th>Type</th></tr></thead>
+        <thead><tr><th>Bore (mm)</th><th>Stroke (mm)</th><th>Ratio</th><th>Geometry</th></tr></thead>
         <tbody>
-          <tr><td>Honda K20A</td><td>86</td><td>86</td><td>1.00</td><td>Square</td></tr>
-          <tr><td>BMW S54</td><td>87</td><td>91</td><td>0.96</td><td>Near-square</td></tr>
-          <tr><td>Chevy LS3</td><td>103.3</td><td>92</td><td>1.12</td><td>Oversquare</td></tr>
-          <tr><td>Ford 5.0 Coyote</td><td>92.2</td><td>92.7</td><td>0.99</td><td>Square</td></tr>
-          <tr><td>Cummins 6.7L</td><td>107</td><td>124</td><td>0.86</td><td>Undersquare</td></tr>
-          <tr><td>Subaru EJ25</td><td>99.5</td><td>79</td><td>1.26</td><td>Oversquare</td></tr>
+          <tr><td>90</td><td>80</td><td>1.125</td><td>Oversquare</td></tr>
+          <tr><td>86</td><td>86</td><td>1.000</td><td>Square</td></tr>
+          <tr><td>80</td><td>90</td><td>0.889</td><td>Undersquare</td></tr>
         </tbody>
       </table>
     </section>
@@ -71,7 +68,7 @@ import Layout from '../../layouts/Layout.astro';
       <h3>Rod/Stroke Ratio</h3>
       <p>Connecting rod length ÷ Stroke affects side loading, dwell at TDC, and piston acceleration. Often more important than bore/stroke alone.</p>
       <h3>Thermal Efficiency</h3>
-      <p>Undersquare (long-stroke) engines have less surface-area-to-volume ratio at TDC, reducing heat loss and improving thermal efficiency — why diesels are undersquare.</p>
+      <p>Bore/stroke ratio alone does not establish thermal efficiency. Combustion chamber geometry, heat transfer, compression ratio, and operating conditions also matter.</p>
     </section>
     <section>
       <h2>Key Takeaway</h2>

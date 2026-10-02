@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ReferencePage from '../components/ReferencePage.astro';
+---
+<Layout title="Calculator Methodology & Assumptions" description="Unit conversions, geometric formulas, empirical quarter-mile constants, injector assumptions, and how to interpret automotive calculator results.">
+  <ReferencePage title="Calculator Methodology & Assumptions" description="Each tool uses the values and units shown in its form. Calculation precision is retained until the result is formatted for display.">
+    <h2>Unit conventions</h2>
+    <ul>
+      <li>1 inch = 25.4 millimeters. 1 pound = 0.45359237 kilograms.</li>
+      <li>Power uses mechanical horsepower: 1 hp = 0.745699872 kW.</li>
+      <li>A US short ton is 2,000 pounds. A metric tonne is 1,000 kilograms.</li>
+      <li>A mile is 1,609,344 millimeters. Tire revolutions per mile divide that distance by the nominal circumference in millimeters.</li>
+    </ul>
+    <h2>Geometry and power</h2>
+    <p>Wheel offset compares rim edges relative to the mounting plane. Displacement and compression ratio use cylinder volumes. Horsepower uses torque multiplied by angular speed. Each calculator shows the formula, variables, and a worked example next to the tool.</p>
+    <p>Use consistent measurement points: crankshaft torque and wheel torque describe different power measurements. Bore/stroke ratio describes geometry and does not establish an engine's power or torque curve.</p>
+    <h2 id="quarter-mile">Quarter-mile model</h2>
+    <p>The estimator uses <code>ET = 5.825 × (weight_lb / hp)^(1/3)</code> and <code>trap_mph = 234 × (hp / weight_lb)^(1/3)</code>. These coefficients are empirical model choices, not physical constants or a verified prediction for your vehicle.</p>
+    <p>The crank/wheel selector labels your power measurement. It applies no drivetrain-loss correction and leaves the numerical result unchanged for the same horsepower. Include the vehicle, driver, and carried load in weight. Traction, gearing, launch, aerodynamics, weather, and track conditions are outside the model.</p>
+    <h2 id="injector">Injector sizing assumptions</h2>
+    <p>Required mass flow is power × BSFC. Divide by injector count and duty cycle for flow per injector. Volume flow also depends on the fuel density entered. The defaults are an editable example, not a recommendation for every engine or fuel.</p>
+    <p>Changing density alone compares volume at the same mass flow. It does not model a fuel change. Use measured BSFC or suitable engine data, and check the injector manufacturer's flow, pressure, and duty-cycle specifications.</p>
+    <h2>Tire dimensions and fitment</h2>
+    <p>Tire size calculations use nominal section width, aspect ratio, and rim diameter. Displayed percentage bands help compare diameter changes. They do not establish compatibility with brakes, suspension, fenders, gearing, or vehicle systems.</p>
+    <h2>Verification and corrections</h2>
+    <p>Tests cover known arithmetic, conversions, invalid inputs, and browser result updates. Consult component specifications and measurements for final decisions. The <a href="https://github.com/yes155/automotive-calculator-site">source repository</a> contains the implementations and reference tests.</p>
+    <p><a href="/calculators/">Choose a calculator</a></p>
+  </ReferencePage>
+</Layout>

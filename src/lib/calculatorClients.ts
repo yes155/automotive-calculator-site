@@ -76,7 +76,7 @@ bindCalculator('tire-size', {
   labels: { tireAWidth: 'Tire A section width (mm)', tireAAspect: 'Tire A aspect ratio (%)', tireARim: 'Tire A rim diameter (inches)', tireBWidth: 'Tire B section width (mm)', tireBAspect: 'Tire B aspect ratio (%)', tireBRim: 'Tire B rim diameter (inches)' },
   render: (panel, r) => {
     const c = r.comparison;
-    const speedoLabel = `Speedometer reads ${Math.abs(c.speedometerErrorPct).toFixed(1)}% ${c.speedometerErrorPct > 0 ? 'high' : 'low'}: 60 shown = ${c.speedometerReadingAt60.toFixed(1)} actual`;
+    const speedoLabel = c.speedometerErrorPct === 0 ? 'No nominal change: 60 shown = 60.0 actual' : `Speedometer reads ${Math.abs(c.speedometerErrorPct).toFixed(1)}% ${c.speedometerErrorPct > 0 ? 'high' : 'low'}: 60 shown = ${c.speedometerReadingAt60.toFixed(1)} actual`;
     renderResult(panel, `${signed(c.diameterDiffMm)} mm (${signed(c.diameterDiffPct)}%)`, [
       `${r.tireA.diameterIn.toFixed(2)} in (${r.tireA.diameterMm.toFixed(1)} mm)`,
       `${r.tireB.diameterIn.toFixed(2)} in (${r.tireB.diameterMm.toFixed(1)} mm)`,
@@ -89,7 +89,7 @@ bindCalculator('tire-size', {
     if (badge) {
       badge.classList.remove('verdict-ok', 'verdict-warn', 'verdict-bad');
       badge.classList.add(c.verdict === 'ok' ? 'verdict-ok' : c.verdict === 'caution' ? 'verdict-warn' : 'verdict-bad');
-      badge.textContent = c.verdict === 'ok' ? 'Within common 3% tolerance' : c.verdict === 'caution' ? 'Caution: 3–5% difference' : 'Not recommended: >5% difference';
+      badge.textContent = c.verdict === 'ok' ? 'Diameter difference ≤3%' : c.verdict === 'caution' ? 'Diameter difference 3–5%: review vehicle specifications' : 'Diameter difference >5%: review vehicle specifications';
     }
     const speeds = [c.speedometerReadingAt30, c.speedometerReadingAt45, c.speedometerReadingAt60, c.speedometerReadingAt70, c.speedometerReadingAt80];
     panel.querySelectorAll('.speedo-table tbody tr td:last-child').forEach((cell, index) => { cell.textContent = speeds[index].toFixed(1); });

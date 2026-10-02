@@ -2,84 +2,43 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="BSFC Explained" description="What brake-specific fuel consumption measures, why it varies, and how it affects injector sizing.">
+<Layout pageType="article" title="BSFC Explained" description="What brake-specific fuel consumption measures, why it varies, and how it affects injector sizing.">
   <article class="guide-page">
     <header>
       <h1>BSFC Explained</h1>
       <p class="guide-meta">Brake-specific fuel consumption — what it is, why it varies, and injector sizing</p>
     </header>
     <section>
-      <h2>What Is BSFC?</h2>
-      <p><strong>Brake-Specific Fuel Consumption (BSFC)</strong> measures how efficiently an engine converts fuel into power:</p>
-      <p class="formula-inline">BSFC = Fuel Mass Flow Rate / Power Output</p>
-      <p>Units: <strong>lb / (hp × hr)</strong> or <strong>g / (kW × hr)</strong></p>
-      <p>Lower BSFC = more efficient (less fuel per horsepower). Higher BSFC = less efficient.</p>
+      <h2>What BSFC Measures</h2>
+      <p>Brake-specific fuel consumption is fuel mass flow divided by measured brake power at the same operating point. Units must stay consistent.</p>
+      <p class="formula-inline">BSFC = fuel mass flow (lb/hr) / power (hp)</p>
+      <p>For example, 200 lb/hr divided by 400 hp gives 0.50 lb/(hp·hr). Convert to g/(kW·hr) by multiplying by 453.59237 and dividing by 0.745699872: approximately 304 g/(kW·hr).</p>
     </section>
     <section>
-      <h2>Typical BSFC Ranges</h2>
-      <table class="guide-table">
-        <thead><tr><th>Engine Type / Condition</th><th>BSFC (lb/hp/hr)</th><th>BSFC (g/kWh)</th></tr></thead>
-        <tbody>
-          <tr><td>Modern NA gasoline (best efficiency)</td><td>0.40–0.45</td><td>243–273</td></tr>
-          <tr><td>Typical NA gasoline (street)</td><td>0.45–0.55</td><td>273–334</td></tr>
-          <tr><td>Forced induction gasoline (turbo/supercharged)</td><td>0.55–0.65</td><td>334–395</td></tr>
-          <tr><td>High-boost / race gasoline</td><td>0.60–0.75</td><td>365–456</td></tr>
-          <tr><td>E85 / Flex fuel (gasoline mode)</td><td>0.50–0.60</td><td>304–365</td></tr>
-          <tr><td>E85 / Flex fuel (E85 mode)</td><td>0.65–0.85</td><td>395–517</td></tr>
-          <tr><td>Methanol</td><td>0.80–1.00+</td><td>487–608+</td></tr>
-          <tr><td>Diesel (modern turbo)</td><td>0.32–0.40</td><td>195–243</td></tr>
-        </tbody>
-      </table>
+      <h2>Choosing an Assumption</h2>
+      <p>BSFC depends on fuel, load, RPM, and engine calibration. A measured fuel-flow and power pair is more specific than a generic engine-category range. Do not treat the calculator's 0.50 default as a universal recommendation.</p>
+      <p>Use appropriate engine data, record the operating point and fuel, and check your assumptions with the engine builder or tuner. A change of fuel needs an appropriate BSFC as well as density.</p>
     </section>
     <section>
-      <h2>Why BSFC Varies</h2>
-      <h3>Load and RPM</h3>
-      <p>BSFC is lowest at peak torque RPM (best volumetric efficiency) and increases at both lower and higher RPM. At WOT, BSFC follows a U-shaped curve across the RPM range.</p>
-      <h3>Air-Fuel Ratio (Lambda)</h3>
-      <p>Stoichiometric (λ=1.0) is not minimum BSFC. Best BSFC is typically slightly rich (λ≈0.90–0.95 for gasoline) due to cooling and flame speed effects. Leaner than stoichiometric increases BSFC.</p>
-      <h3>Compression Ratio</h3>
-      <p>Higher compression improves thermodynamic efficiency → lower BSFC.</p>
-      <h3>Combustion Chamber Design</h3>
-      <p>Fast-burn chambers, good quench, and optimal spark plug location reduce BSFC.</p>
-      <h3>Forced Induction</h3>
-      <p>Turbo/supercharged engines run richer (λ≈0.75–0.85) for cooling and knock prevention → higher BSFC. Intercooler efficiency, boost pressure, and turbine backpressure all affect it.</p>
-      <h3>Fuel Type</h3>
-      <p>E85 requires ~30% more mass flow for same energy → BSFC appears higher numerically, but energy-specific consumption may be similar.</p>
+      <h2>How Injector Sizing Uses BSFC</h2>
+      <p>The <a href="/calculators/fuel-injector/">Fuel Injector Calculator</a> multiplies target power by BSFC for required fuel mass flow, then divides by injector count and selected duty cycle.</p>
+      <p class="formula-inline">flow per injector (lb/hr) = hp × BSFC / (injector count × duty cycle)</p>
+      <p>For 400 hp, BSFC 0.50, four injectors, and duty cycle 0.80, the example produces 62.5 lb/hr per injector. With density 0.75 g/mL, this is approximately 630 cc/min.</p>
+      <p>These are example assumptions. Duty-cycle and fuel-pressure requirements must come from the injector and system specifications.</p>
     </section>
     <section>
-      <h2>BSFC in Injector Sizing</h2>
-      <p>The <a href="/calculators/fuel-injector/">Fuel Injector Calculator</a> uses BSFC to estimate total fuel mass flow:</p>
-      <p class="formula-inline">Total lb/hr = Target HP × BSFC</p>
-      <p class="formula-inline">Per Injector = Total / (Injector Count × Duty Cycle)</p>
-      <p><strong>Critical:</strong> Do not use a single "universal" BSFC value. The calculator requires you to enter BSFC explicitly so you choose an assumption appropriate for your combination.</p>
-      <h3>Choosing a BSFC Value</h3>
-      <ol>
-        <li>Start with the table above for your engine type</li>
-        <li>If dyno-tuned with known fuel flow, calculate actual BSFC: BSFC = Actual lb/hr ÷ Actual HP</li>
-        <li>For safety margin, add 0.05–0.10 to your estimate</li>
-        <li>Remember: injector duty cycle should stay ≤85%</li>
-      </ol>
-    </section>
-    <section>
-      <h2>Common Mistakes</h2>
+      <h2>Common Input Mistakes</h2>
       <ul>
-        <li>Using 0.50 for everything — it's only correct for efficient NA gasoline at peak torque</li>
-        <li>Forgetting E85 requires ~40% more cc/min for same hp (lower energy density)</li>
-        <li>Assuming BSFC is constant across RPM — it's not</li>
-        <li>Sizing injectors at 100% duty cycle — leaves no margin for altitude, fuel variation, injector variance</li>
-        <li>Not accounting for fuel pressure differences (injector ratings typically at 43.5 psi / 3 bar)</li>
+        <li>Entering 80 instead of 0.80 for an 80% duty cycle.</li>
+        <li>Mixing crankshaft power with BSFC measured at a different power measurement point.</li>
+        <li>Changing density alone and treating it as a complete fuel conversion.</li>
+        <li>Comparing injector flow ratings measured at different pressures.</li>
       </ul>
     </section>
     <section>
-      <h2>Key Takeaways</h2>
-      <ul>
-        <li>BSFC is a measure of efficiency, not a fixed constant</li>
-        <li>Typical range: 0.40–0.85 lb/hp/hr depending on engine and fuel</li>
-        <li>Always choose BSFC deliberately for your combination</li>
-        <li>Use the calculator with your chosen BSFC — don't rely on hidden presets</li>
-        <li>Verify final sizing with injector manufacturer data and dyno tuning</li>
-        <li>Reference <a href="https://www.sae.org/" target="_blank" rel="noopener">SAE International</a> standards for fuel system design and <a href="https://www.epa.gov/" target="_blank" rel="noopener">EPA</a> emissions guidelines</li>
-      </ul>
+      <h2>Method and Manufacturer Reference</h2>
+      <p><a href="https://www.holley.com/blog/post/how_to_properly_size_fuel_injectors_for_your_engine/">Holley's injector sizing explanation</a> describes the relationship between horsepower, BSFC, injector count, duty cycle, and fuel pressure. Apply the specifications for the components you actually use.</p>
+      <p>See the site's <a href="/methodology/#injector">injector methodology</a> for the density conversion and the limits of the estimate.</p>
     </section>
     <nav class="guide-nav">
       <a href="/calculators/fuel-injector/" class="btn-primary">Fuel Injector Calculator</a>

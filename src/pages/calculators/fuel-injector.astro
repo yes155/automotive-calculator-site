@@ -7,12 +7,11 @@ import FormulaBlock from '../../components/FormulaBlock.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
 import { calculateFuelInjector, validateFuelInjector, type FuelInjectorInput } from '../../lib/calculators/fuelInjector.ts';
 
-const url = new URL(Astro.url);
-const horsepower = parseFloat(url.searchParams.get('horsepower') || '400');
-const bsfc = parseFloat(url.searchParams.get('bsfc') || '0.5');
-const injectorCount = parseInt(url.searchParams.get('injectorCount') || '4');
-const dutyCycle = parseFloat(url.searchParams.get('dutyCycle') || '0.8');
-const fuelDensity = parseFloat(url.searchParams.get('fuelDensity') || '0.75');
+const horsepower = 400;
+const bsfc = 0.5;
+const injectorCount = 4;
+const dutyCycle = 0.8;
+const fuelDensity = 0.75;
 const input: FuelInjectorInput = { horsepower, bsfc, injectorCount, dutyCycle, fuelDensity };
 const validation = validateFuelInjector(input);
 const result = calculateFuelInjector(input);
@@ -35,7 +34,7 @@ const canonical = '/calculators/fuel-injector/';
       </fieldset>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Calculate</button>
-        <a href="/calculators/fuel-injector/" class="btn-secondary">Reset</a>
+        <button type="reset" class="btn-secondary">Reset</button>
       </div>
     </form>
     <ResultCard slot="results" primaryValue={`${result.perInjectorCcMin.toFixed(0)} cc/min (${result.perInjectorLbHr.toFixed(1)} lb/hr)`} primaryLabel="Per Injector Flow" secondaryValues={[
@@ -53,10 +52,10 @@ const canonical = '/calculators/fuel-injector/';
       { symbol: 'duty_cycle', name: 'Max injector duty cycle', unit: 'decimal (0–1)' },
       { symbol: 'density', name: 'Fuel density', unit: 'g/mL' },
     ]} notes={[
-      'Typical BSFC: 0.45–0.50 (NA gasoline), 0.55–0.65 (forced induction gasoline), 0.60–0.75 (E85).',
-      'Do not silently use a performance-sensitive BSFC preset — name the assumption and let the user edit it.',
-      'Typical fuel density: 0.72–0.78 g/mL (gasoline), ~0.79 g/mL (E85).',
-      'Duty cycle >85% risks injector overheating and inconsistent flow.',
+      'Use BSFC appropriate to the fuel, engine, load, and power measurement point.',
+      'Default BSFC 0.50 and density 0.75 g/mL are editable example assumptions.',
+      'Fuel density varies with composition and temperature. Use the value for your fuel.',
+      'Check the injector manufacturer’s permitted duty cycle and leave suitable operating margin.',
     ]} />
     <div slot="example" class="worked-example">
       <p><strong>Example:</strong> 400 hp, BSFC 0.50, 4 injectors, 80% duty, gasoline (0.75 g/mL)</p>
@@ -65,7 +64,8 @@ const canonical = '/calculators/fuel-injector/';
         <li>Per injector: 200 / (4 × 0.8) = <strong>62.5 lb/hr</strong></li>
         <li>cc/min: 62.5 × 453.59237 / 60 / 0.75 = <strong>630 cc/min</strong></li>
       </ul>
-      <p><strong>Same setup, E85 (0.79 g/mL):</strong></p>
+      <p>This comparison holds fuel mass demand fixed. A different fuel also needs an appropriate BSFC; density alone does not size an E85 conversion.</p>
+      <p><strong>Density-only comparison at the same BSFC (0.79 g/mL):</strong></p>
       <ul>
         <li>cc/min: 62.5 × 453.59237 / 60 / 0.79 = <strong>598 cc/min</strong></li>
       </ul>

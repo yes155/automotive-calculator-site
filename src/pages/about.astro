@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ReferencePage from '../components/ReferencePage.astro';
+---
+<Layout title="About Automotive Calculators" description="The purpose and scope of Automotive Calculators: eight tools with visible formulas, explicit units, and practical limitations.">
+  <ReferencePage title="About Automotive Calculators" description="Automotive Calculators helps car owners, builders, and enthusiasts check wheel, tire, engine, performance, and fueling calculations.">
+    <h2>Tools for a specific task</h2>
+    <p>Compare wheel positions, calculate engine geometry, convert torque and RPM into power, or explore a fueling or performance estimate. Each calculator explains its inputs, formula, worked example, and limitations.</p>
+    <h2>What a result means</h2>
+    <p>Geometry tools describe nominal dimensions. Performance and injector tools depend on the assumptions you enter. A result does not establish fitment, an engine's fuel requirement, or an actual track time.</p>
+    <h2>How calculations are checked</h2>
+    <p>Formula modules are tested against reference examples and unit conversions. Browser tests exercise the forms, results, invalid inputs, and recovery after correction. Read the <a href="/methodology/">methodology</a> for the calculation conventions.</p>
+    <h2>Inspect the implementation</h2>
+    <p>The <a href="https://github.com/yes155/automotive-calculator-site">project repository</a> contains the formula modules and tests. Include the calculator, input values and units, expected result, and actual result when reporting a calculation issue there.</p>
+    <p><a href="/calculators/">Browse all eight calculators</a></p>
+  </ReferencePage>
+</Layout>

@@ -7,11 +7,10 @@ import FormulaBlock from '../../components/FormulaBlock.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
 import { calculateEngineDisplacement, validateEngineDisplacement, type EngineDisplacementInput } from '../../lib/calculators/engineDisplacement.ts';
 
-const url = new URL(Astro.url);
-const bore = parseFloat(url.searchParams.get('bore') || '86');
-const stroke = parseFloat(url.searchParams.get('stroke') || '86');
-const cylinders = parseInt(url.searchParams.get('cylinders') || '4');
-const unitSystem = (url.searchParams.get('unitSystem') as 'mm' | 'in') || 'mm';
+const bore = 86;
+const stroke = 86;
+const cylinders = 4;
+const unitSystem = 'mm';
 const input: EngineDisplacementInput = { bore, stroke, cylinders, unitSystem };
 const validation = validateEngineDisplacement(input);
 const result = calculateEngineDisplacement(input);
@@ -31,7 +30,7 @@ const canonical = '/calculators/engine-displacement/';
         <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} /><span>mm</span></label>
         <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} /><span>inches</span></label>
         <button type="submit" class="btn-primary">Calculate</button>
-        <a href="/calculators/engine-displacement/" class="btn-secondary">Reset</a>
+        <button type="reset" class="btn-secondary">Reset</button>
       </div>
     </form>
     <ResultCard slot="results" primaryValue={`${result.totalDisplacementCc.toFixed(0)} cc (${result.totalDisplacementL.toFixed(2)} L, ${result.totalDisplacementCi.toFixed(1)} cu in)`} primaryLabel="Total Displacement" secondaryValues={[

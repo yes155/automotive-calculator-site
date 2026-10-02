@@ -1,3 +1,4 @@
+import { calculateFuelInjector as calculateFuelInjectorModel } from '../calculators/fuelInjector';
 /**
  * Shared calculation engine for automotive calculators.
  * Pure functions, no framework dependencies. Constants defined once.
@@ -229,12 +230,7 @@ export function calculateHorsepower(torque: number, torqueUnit: 'lb-ft' | 'nm', 
 }
 
 export function calculateFuelInjector(horsepower: number, bsfc: number, injectorCount: number, dutyCycle: number, fuelDensity: number) {
-  const totalLbHr = horsepower * bsfc;
-  const perInjectorLbHr = safeDivide(totalLbHr, injectorCount * dutyCycle);
-  const perInjectorCcMin = safeDivide(perInjectorLbHr * 453.59237, 60 * fuelDensity);
-  const totalCcMin = perInjectorCcMin * injectorCount;
-  const interpretation = `Target: ${horsepower} hp × ${bsfc} BSFC = ${totalLbHr.toFixed(1)} lb/hr total. Per injector (${injectorCount} @ ${(dutyCycle * 100).toFixed(0)}% duty): ${perInjectorLbHr.toFixed(1)} lb/hr = ${perInjectorCcMin.toFixed(0)} cc/min @ ${fuelDensity} g/mL. Total flow: ${totalCcMin.toFixed(0)} cc/min. Note: Real sizing depends on fuel pressure, injector characterization, fuel type, target AFR, and system design.`;
-  return { totalLbHr, perInjectorLbHr, perInjectorCcMin, totalCcMin, interpretation };
+  return calculateFuelInjectorModel({ horsepower, bsfc, injectorCount, dutyCycle, fuelDensity });
 }
 
 export function calculateQuarterMile(weight: number, weightUnit: 'lb' | 'kg', horsepower: number, powerType?: 'crank' | 'wheel') {

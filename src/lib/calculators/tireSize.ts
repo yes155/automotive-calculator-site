@@ -80,10 +80,10 @@ export function calculateTireSize(input: TireSizeInput): TireSizeResult {
   
   const interpretation = 
     `Tire B is ${Math.abs(diameterDiffMm).toFixed(1)} mm (${Math.abs(diameterDiffPct).toFixed(1)}%) ` +
-    `${diameterDiffMm > 0 ? 'larger' : 'smaller'} in diameter than Tire A. ` +
+    `${diameterDiffMm === 0 ? 'unchanged' : diameterDiffMm > 0 ? 'larger' : 'smaller'} in diameter than Tire A. ` +
     `Ground clearance changes by ${Math.abs(groundClearanceChangeMm).toFixed(1)} mm. ` +
     `At 60 MPH indicated, actual speed = ${speedometerReadingAt60.toFixed(1)} MPH ` +
-    `(speedometer reads ${speedometerErrorPct > 0 ? 'high' : 'low'} by ${Math.abs(speedometerErrorPct).toFixed(1)}%). ` +
+    (speedometerErrorPct === 0 ? '(no nominal speedometer change). ' : `(speedometer reads ${speedometerErrorPct > 0 ? 'high' : 'low'} by ${Math.abs(speedometerErrorPct).toFixed(1)}%). `) +
     `Note: Nominal tire dimensions can differ from measured dimensions by model, rim width, pressure, and load.`;
   
   return {

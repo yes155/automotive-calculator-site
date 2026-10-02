@@ -50,6 +50,11 @@ export function bindCalculator<Input extends object, Result>(id: string, options
   warning.hidden = true;
   panel.before(warning);
   const fields = [...form.querySelectorAll<HTMLInputElement>('input[type="number"]')];
+  const defaults = fields.map(field => ({ field, min: field.min, max: field.max, step: field.step }));
+  const defaultControls = [...form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')]
+    .map(control => ({ control, value: control.value, checked: control instanceof HTMLInputElement ? control.checked : undefined }));
+  const resetUnits: (() => void)[] = [];
+  let persistInputs = false;
   const errors = new Map<HTMLInputElement, HTMLParagraphElement>();
   fields.forEach(field => {
     const error = document.createElement('p');
@@ -112,6 +117,11 @@ export function bindCalculator<Input extends object, Result>(id: string, options
       panel.hidden = false;
       warning.textContent = validation.warnings.join(' ');
       warning.hidden = validation.warnings.length === 0;
+      if (persistInputs) {
+        const url = new URL(window.location.href);
+        new FormData(form).forEach((value, name) => url.searchParams.set(name, String(value)));
+        window.history.replaceState(null, '', url);
+      }
     } catch (error) {
       fail([error instanceof Error ? error.message : 'Unable to calculate with these inputs.']);
     }
@@ -133,6 +143,7 @@ export function bindCalculator<Input extends object, Result>(id: string, options
       label.textContent = field.dataset.unit;
     });
     setLabels(previous);
+    resetUnits.push(() => { previous = getUnit(); setLabels(previous); });
     controls.forEach(control => control.addEventListener('change', () => {
       const next = getUnit();
       const factor = group.factors[previous] / group.factors[next];
@@ -149,4 +160,43 @@ export function bindCalculator<Input extends object, Result>(id: string, options
       form.requestSubmit();
     }));
   }
+
+  form.addEventListener('reset', event => {
+    // Restore complete state before calculating. Reset event microtasks can run
+    // before the browser's default action updates the control values.
+    event.preventDefault();
+    defaultControls.forEach(({ control, value, checked }) => {
+      control.value = value;
+      if (control instanceof HTMLInputElement && checked !== undefined) control.checked = checked;
+    });
+    defaults.forEach(({ field, min, max, step }) => Object.assign(field, { min, max, step }));
+    resetUnits.forEach(reset => reset());
+    form.requestSubmit();
+    const url = new URL(window.location.href);
+    new FormData(form).forEach((_, name) => url.searchParams.delete(name));
+    window.history.replaceState(null, '', url);
+  });
+
+  // Static HTML cannot read the request query. Restore units before values so
+  // supplied measurements are interpreted in the selected units exactly once.
+  const params = new URLSearchParams(window.location.search);
+  let invalidOption = false;
+  for (const select of form.querySelectorAll<HTMLSelectElement>('select')) {
+    if (!params.has(select.name)) continue;
+    const value = params.get(select.name)!;
+    if (![...select.options].some(option => option.value === value)) { invalidOption = true; continue; }
+    select.value = value;
+    select.dispatchEvent(new Event('change'));
+  }
+  for (const radio of form.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
+    if (!params.has(radio.name)) continue;
+    const value = params.get(radio.name)!;
+    const choices = [...form.querySelectorAll<HTMLInputElement>('input[type="radio"]')].filter(choice => choice.name === radio.name);
+    if (!choices.some(choice => choice.value === value)) invalidOption = true;
+    if (radio.value === value) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+  }
+  fields.forEach(field => { if (params.has(field.name)) field.value = params.get(field.name)!; });
+  form.requestSubmit();
+  if (invalidOption) fail(['The link contains an unsupported unit or option. Choose a valid option and calculate again.']);
+  persistInputs = true;
 }

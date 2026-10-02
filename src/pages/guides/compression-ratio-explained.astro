@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Compression Ratio Explained" description="Understanding static vs dynamic compression ratio, component volumes, and octane considerations.">
+<Layout pageType="article" title="Compression Ratio Explained" description="Understanding static vs dynamic compression ratio, component volumes, and octane considerations.">
   <article class="guide-page">
     <header>
       <h1>Compression Ratio Explained</h1>
@@ -19,7 +19,7 @@ import Layout from '../../layouts/Layout.astro';
       <h3>Static Compression Ratio</h3>
       <p>Calculated from physical dimensions only — bore, stroke, chamber volume, piston shape, gasket, and deck clearance. This is what the <a href="/calculators/compression-ratio/">Compression Ratio Calculator</a> computes.</p>
       <h3>Dynamic Compression Ratio</h3>
-      <p>Accounts for intake valve closing (IVC) timing. Since the intake valve closes after BDC, the effective compression stroke starts later, reducing the actual compression ratio. Dynamic CR is always lower than static CR.</p>
+      <p>Accounts for intake valve closing (IVC) timing. Since the intake valve closes after BDC, the effective compression stroke starts later, reducing the actual compression ratio. For an intake valve that closes after BDC, the effective compression stroke is shorter than the full geometric stroke.</p>
       <p>Dynamic CR depends on camshaft profile (duration, LSA, ICL) and is more relevant for octane requirement and detonation resistance.</p>
     </section>
     <section>
@@ -36,17 +36,8 @@ import Layout from '../../layouts/Layout.astro';
     </section>
     <section>
       <h2>Compression Ratio and Octane</h2>
-      <p>Higher compression ratios require higher octane fuel to prevent detonation (knock). Rough guidelines for pump gasoline on typical street engines:</p>
-      <table class="guide-table">
-        <thead><tr><th>Static CR</th><th>Recommended Min Octane (R+M/2)</th></tr></thead>
-        <tbody>
-          <tr><td>≤ 9.5:1</td><td>87 (Regular)</td></tr>
-          <tr><td>9.5–10.5:1</td><td>91 (Premium)</td></tr>
-          <tr><td>10.5–11.5:1</td><td>93 (Premium)</td></tr>
-          <tr><td>> 11.5:1</td><td>Race fuel / E85 required</td></tr>
-        </tbody>
-      </table>
-      <p><strong>Caveats:</strong> These are rough guidelines. Actual octane requirement depends on dynamic CR, combustion chamber design, quench, ignition timing, cooling efficiency, ambient conditions, and tune. Modern engines with knock sensors and direct injection can run higher static CR on lower octane. For authoritative guidance, refer to <a href="https://www.sae.org/" target="_blank" rel="noopener">SAE International</a> standards and <a href="https://www.epa.gov/" target="_blank" rel="noopener">EPA</a> fuel economy guidelines.</p>
+      <p>Static compression ratio alone cannot establish the required fuel octane. Fuel requirements also depend on the engine's combustion system, boost, temperatures, ignition strategy, and calibration.</p>
+      <p>Use the fuel grade required by your vehicle manufacturer. For a modified engine, establish the requirement with the builder or tuner. The <a href="https://www.fueleconomy.gov/feg/octane.shtml">DOE and EPA guide to selecting octane</a> explains manufacturer requirements and knock resistance.</p>
     </section>
     <section>
       <h2>Key Takeaways</h2>
@@ -55,7 +46,7 @@ import Layout from '../../layouts/Layout.astro';
         <li>Dynamic CR (affected by cam timing) is more relevant for octane needs</li>
         <li>Component volumes matter: chamber, gasket, deck, piston shape</li>
         <li>Quench (deck + gasket) affects detonation resistance</li>
-        <li>Always verify with dynamic CR calculation for cam selection</li>
+        <li>Use cam timing and the engine calibration alongside static geometry when assessing a build</li>
       </ul>
     </section>
     <nav class="guide-nav">

@@ -23,7 +23,8 @@ export function calculateFuelInjector(input: FuelInjectorInput): FuelInjectorRes
   const totalLbHr = horsepower * bsfc;
   const perInjectorLbHr = totalLbHr / (injectorCount * dutyCycle);
   const perInjectorCcMin = (perInjectorLbHr * LB_TO_G) / 60 / fuelDensity;
-  const totalCcMin = perInjectorCcMin * injectorCount;
+  // Engine demand excludes the duty-cycle headroom in rated injector capacity.
+  const totalCcMin = (totalLbHr * LB_TO_G) / 60 / fuelDensity;
   
   const interpretation = 
     `Target: ${horsepower} hp × ${bsfc} BSFC = ${totalLbHr.toFixed(1)} lb/hr total. ` +

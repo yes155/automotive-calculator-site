@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Horsepower vs Torque" description="Understanding the relationship between horsepower and torque, the 5252 RPM crossover, and what each means for driving.">
+<Layout pageType="article" title="Horsepower vs Torque" description="Understanding the relationship between horsepower and torque, the 5252 RPM crossover, and what each means for driving.">
   <article class="guide-page">
     <header>
       <h1>Horsepower vs Torque</h1>
@@ -19,7 +19,7 @@ import Layout from '../../layouts/Layout.astro';
     </section>
     <section>
       <h2>The 5252 RPM Crossover</h2>
-      <p>At exactly <strong>5,252 RPM</strong>, the numerical value of torque (in lb-ft) equals the numerical value of horsepower.</p>
+      <p>At approximately <strong>5,252 RPM</strong>, the numerical value of torque (in lb-ft) equals the numerical value of horsepower.</p>
       <ul>
         <li>Below 5,252 RPM: Torque number > Horsepower number</li>
         <li>At 5,252 RPM: Torque = Horsepower</li>
@@ -45,7 +45,7 @@ import Layout from '../../layouts/Layout.astro';
           <tr><td>"Torque wins races, horsepower sells cars"</td><td>Both matter. Horsepower determines how fast you can go; torque determines how quickly you get there <em>in a given gear</em>.</td></tr>
           <tr><td>"Electric motors have infinite torque"</td><td>Electric motors have max torque at 0 RPM, but torque drops as RPM increases. Power is still the limit.</td></tr>
           <tr><td>"Peak torque RPM is best for acceleration"</td><td>Best acceleration in a gear is at peak torque. Best acceleration <em>at a given speed</em> is at peak power (allows lower gear).</td></tr>
-          <tr><td>"High torque = high horsepower"</td><td>Only if torque holds to high RPM. A 500 lb-ft diesel at 2,000 RPM = 190 hp. A 300 lb-ft sport bike at 12,000 RPM = 686 hp.</td></tr>
+          <tr><td>"High torque = high horsepower"</td><td>Only if torque holds to high RPM. A 500 lb-ft diesel at 2,000 RPM = 190 hp. A hypothetical 300 lb-ft engine at 12,000 RPM = 686 hp.</td></tr>
         </tbody>
       </table>
     </section>
@@ -59,7 +59,7 @@ import Layout from '../../layouts/Layout.astro';
         <li>Engine B makes ~380 lb-ft → 380 × gear ratio = wheel torque</li>
       </ul>
       <p>Engine B accelerates harder <em>in that gear</em>. But Engine A can drop to 2nd gear at 60 mph (6,000 RPM) making 350 lb-ft × lower gear ratio = MORE wheel torque.</p>
-      <p><strong>Horsepower lets you use gear multiplication.</strong> For further reading, see <a href="https://www.sae.org/" target="_blank" rel="noopener">SAE International</a> technical papers on engine performance metrics and <a href="https://www.epa.gov/" target="_blank" rel="noopener">EPA</a> vehicle dynamics standards.</p>
+      <p><strong>Horsepower lets you use gear multiplication.</strong> Use the <a href="/calculators/horsepower/">Horsepower Calculator</a> to check torque and RPM at the same measurement point.</p>
     </section>
     <section>
       <h2>Key Takeaways</h2>

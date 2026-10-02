@@ -7,16 +7,15 @@ import FormulaBlock from '../../components/FormulaBlock.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
 import { calculateCompressionRatio, validateCompressionRatio, type CompressionRatioInput } from '../../lib/calculators/compressionRatio.ts';
 
-const url = new URL(Astro.url);
-const bore = parseFloat(url.searchParams.get('bore') || '86');
-const stroke = parseFloat(url.searchParams.get('stroke') || '86');
-const chamberCc = parseFloat(url.searchParams.get('chamberCc') || '45');
-const pistonDishCc = parseFloat(url.searchParams.get('pistonDishCc') || '5');
-const pistonDomeCc = parseFloat(url.searchParams.get('pistonDomeCc') || '0');
-const gasketBore = parseFloat(url.searchParams.get('gasketBore') || '87');
-const gasketThickness = parseFloat(url.searchParams.get('gasketThickness') || '1.2');
-const deckClearance = parseFloat(url.searchParams.get('deckClearance') || '0.5');
-const unitSystem = (url.searchParams.get('unitSystem') as 'mm' | 'in') || 'mm';
+const bore = 86;
+const stroke = 86;
+const chamberCc = 45;
+const pistonDishCc = 5;
+const pistonDomeCc = 0;
+const gasketBore = 87;
+const gasketThickness = 1.2;
+const deckClearance = 0.5;
+const unitSystem = 'mm';
 
 const input: CompressionRatioInput = { bore, stroke, chamberCc, pistonDishCc, pistonDomeCc, gasketBore, gasketThickness, deckClearance, unitSystem };
 const validation = validateCompressionRatio(input);
@@ -48,7 +47,7 @@ const canonical = '/calculators/compression-ratio/';
         <label class="unit-toggle"><input type="radio" name="unitSystem" value="mm" checked={unitSystem === 'mm'} /><span>mm</span></label>
         <label class="unit-toggle"><input type="radio" name="unitSystem" value="in" checked={unitSystem === 'in'} /><span>inches</span></label>
         <button type="submit" class="btn-primary">Calculate</button>
-        <a href="/calculators/compression-ratio/" class="btn-secondary">Reset</a>
+        <button type="reset" class="btn-secondary">Reset</button>
       </div>
     </form>
     <ResultCard slot="results" primaryValue={`${result.compressionRatio.toFixed(2)}:1`} primaryLabel="Static Compression Ratio" secondaryValues={[

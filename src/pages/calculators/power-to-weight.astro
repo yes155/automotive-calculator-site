@@ -7,11 +7,10 @@ import FormulaBlock from '../../components/FormulaBlock.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
 import { calculatePowerToWeight, validatePowerToWeight, type PowerToWeightInput } from '../../lib/calculators/powerToWeight.ts';
 
-const url = new URL(Astro.url);
-const power = parseFloat(url.searchParams.get('power') || '300');
-const powerUnit = (url.searchParams.get('powerUnit') as 'hp' | 'kw') || 'hp';
-const weight = parseFloat(url.searchParams.get('weight') || '3000');
-const weightUnit = (url.searchParams.get('weightUnit') as 'lb' | 'kg') || 'lb';
+const power = 300;
+const powerUnit = 'hp';
+const weight = 3000;
+const weightUnit = 'lb';
 const input: PowerToWeightInput = { power, powerUnit, weight, weightUnit };
 const validation = validatePowerToWeight(input);
 const result = calculatePowerToWeight(input);
@@ -43,7 +42,7 @@ const canonical = '/calculators/power-to-weight/';
       </fieldset>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Calculate</button>
-        <a href="/calculators/power-to-weight/" class="btn-secondary">Reset</a>
+        <button type="reset" class="btn-secondary">Reset</button>
       </div>
     </form>
     <ResultCard slot="results" primaryValue={`${result.hpPerLb.toFixed(4)} hp/lb`} primaryLabel="Power-to-Weight" secondaryValues={[
@@ -61,7 +60,7 @@ const canonical = '/calculators/power-to-weight/';
       { symbol: '1 hp', name: 'Mechanical horsepower', unit: '= 0.745699872 kW' },
       { symbol: '1 lb', name: 'Pound', unit: '= 0.45359237 kg' },
     ]} notes={[
-      '1 mechanical hp = 0.745699872 kW exactly.',
+      'Mechanical horsepower is converted using 1 hp = 0.745699872 kW.',
       '1 lb = 0.45359237 kg exactly.',
       'US ton = 2,000 lb (not metric tonne).',
       'Power and weight must both be > 0.',
@@ -86,7 +85,7 @@ const canonical = '/calculators/power-to-weight/';
       <p><strong>Limitations:</strong></p>
       <ul>
         <li>Power-to-weight is a single metric — does not capture torque curve, gearing, traction, aero</li>
-        <li>Crank hp vs wheel hp changes ratio by ~15–20%</li>
+        <li>Use the same power measurement basis when comparing vehicles. Drivetrain losses vary; no fixed crank-to-wheel correction is applied.</li>
         <li>Weight should include driver, fluids, cargo for accurate vehicle ratio</li>
         <li>Does not indicate where in RPM range power is made</li>
       </ul>

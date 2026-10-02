@@ -19,7 +19,17 @@ describe('Fuel Injector Calculator', () => {
     expect(result.totalLbHr).toBe(200);
     expect(result.perInjectorLbHr).toBeCloseTo(62.5, 1);
     expect(result.perInjectorCcMin).toBeCloseTo(630, 0);
-    expect(result.totalCcMin).toBeCloseTo(2520, 0);
+    expect(result.totalCcMin).toBeCloseTo(2016, 0);
+  });
+
+  it('duty-cycle headroom changes injector capacity, not required engine flow', () => {
+    const common = { horsepower: 400, bsfc: 0.5, injectorCount: 4, fuelDensity: 0.75 };
+    const at80 = calculateFuelInjector({ ...common, dutyCycle: 0.8 });
+    const at100 = calculateFuelInjector({ ...common, dutyCycle: 1 });
+    expect(at80.totalLbHr).toBe(at100.totalLbHr);
+    expect(at80.totalCcMin).toBe(at100.totalCcMin);
+    expect(at80.totalCcMin * 0.75 * 60 / 453.59237).toBeCloseTo(200, 8);
+    expect(at80.perInjectorLbHr).toBeCloseTo(at100.perInjectorLbHr / 0.8, 8);
   });
 
   it('handles different BSFC values', () => {

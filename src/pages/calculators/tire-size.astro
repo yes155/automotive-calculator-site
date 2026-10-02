@@ -7,13 +7,12 @@ import FormulaBlock from '../../components/FormulaBlock.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
 import { calculateTireSize, validateTireSize, type TireSizeInput } from '../../lib/calculators/tireSize.ts';
 
-const url = new URL(Astro.url);
-const tireAWidth = parseFloat(url.searchParams.get('tireAWidth') || '225');
-const tireAAspect = parseFloat(url.searchParams.get('tireAAspect') || '45');
-const tireARim = parseFloat(url.searchParams.get('tireARim') || '17');
-const tireBWidth = parseFloat(url.searchParams.get('tireBWidth') || '235');
-const tireBAspect = parseFloat(url.searchParams.get('tireBAspect') || '40');
-const tireBRim = parseFloat(url.searchParams.get('tireBRim') || '18');
+const tireAWidth = 225;
+const tireAAspect = 45;
+const tireARim = 17;
+const tireBWidth = 235;
+const tireBAspect = 40;
+const tireBRim = 18;
 const input: TireSizeInput = { tireAWidth, tireAAspect, tireARim, tireBWidth, tireBAspect, tireBRim };
 const validation = validateTireSize(input);
 const result = calculateTireSize(input);
@@ -35,7 +34,7 @@ const speedoErr = result.comparison.speedometerErrorPct;
 const speedoLabel = `Speedometer reads ${Math.abs(speedoErr).toFixed(1)}% ${speedoErr > 0 ? 'high' : 'low'}: 60 shown = ${speedo60.toFixed(1)} actual`;
 
 const verdict = result.comparison.verdict;
-const verdictText = verdict === 'ok' ? 'Within common 3% tolerance' : verdict === 'caution' ? 'Caution: 3–5% difference' : 'Not recommended: >5% difference';
+const verdictText = verdict === 'ok' ? 'Diameter difference ≤3%' : verdict === 'caution' ? 'Diameter difference 3–5%: review vehicle specifications' : 'Diameter difference >5%: review vehicle specifications';
 const verdictClass = verdict === 'ok' ? 'verdict-ok' : verdict === 'caution' ? 'verdict-warn' : 'verdict-bad';
 ---
 
@@ -56,7 +55,7 @@ const verdictClass = verdict === 'ok' ? 'verdict-ok' : verdict === 'caution' ? '
       </fieldset>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Calculate</button>
-        <a href="/calculators/tire-size/" class="btn-secondary">Reset</a>
+        <button type="reset" class="btn-secondary">Reset</button>
       </div>
     </form>
 
@@ -128,7 +127,7 @@ speedometer_error_pct = (diameter_A / diameter_B − 1) × 100`} variables={[
     <div slot="limitations" class="limitations">
       <p><strong>Notes &amp; limitations:</strong></p>
       <ul>
-        <li><strong>Nominal vs actual:</strong> Stated dimensions can differ from measured by ±2–3% due to tire model, construction, rim width, pressure, load, and wear.</li>
+        <li><strong>Nominal vs actual:</strong> Stated dimensions can differ from measured dimensions due to tire model, construction, rim width, pressure, load, and wear.</li>
         <li><strong>Section width</strong> is measured on design rim width — actual width changes with rim width.</li>
         <li><strong>Aspect ratio</strong> is calculated at design load and pressure.</li>
         <li><strong>Speedometer calibration</strong> assumes original tire was correct — if already off, error compounds.</li>

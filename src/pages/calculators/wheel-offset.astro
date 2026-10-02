@@ -7,11 +7,10 @@ import FormulaBlock from '../../components/FormulaBlock.astro';
 import RelatedTools from '../../components/RelatedTools.astro';
 import { calculateWheelOffset, validateWheelOffset, type WheelOffsetInput } from '../../lib/calculators/wheelOffset.ts';
 
-const url = new URL(Astro.url);
-const currentWidthIn = parseFloat(url.searchParams.get('currentWidthIn') || '8');
-const currentOffsetMm = parseFloat(url.searchParams.get('currentOffsetMm') || '35');
-const newWidthIn = parseFloat(url.searchParams.get('newWidthIn') || '9');
-const newOffsetMm = parseFloat(url.searchParams.get('newOffsetMm') || '45');
+const currentWidthIn = 8;
+const currentOffsetMm = 35;
+const newWidthIn = 9;
+const newOffsetMm = 45;
 
 const input: WheelOffsetInput = { currentWidthIn, currentOffsetMm, newWidthIn, newOffsetMm };
 const validation = validateWheelOffset(input);
@@ -34,7 +33,7 @@ const canonical = '/calculators/wheel-offset/';
       </fieldset>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Calculate</button>
-        <a href="/calculators/wheel-offset/" class="btn-secondary">Reset</a>
+        <button type="reset" class="btn-secondary">Reset</button>
       </div>
     </form>
 

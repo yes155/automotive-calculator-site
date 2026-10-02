@@ -20,6 +20,8 @@ const { title, description, calculatorId } = Astro.props;
   <div class="calc-body">
     <section class="calc-inputs" aria-labelledby="inputs-heading">
       <h2 id="inputs-heading" class="visually-hidden">Calculator Inputs</h2>
+      <p class="input-note">Example inputs are prefilled. Enter your measurements, then select Calculate. The address bar saves the inputs for sharing.</p>
+      <noscript><p class="calculator-error-summary">Enable JavaScript to calculate with your own inputs. The formula and worked example are available below.</p></noscript>
       <slot name="inputs" />
     </section>
     <aside class="calc-results" aria-live="polite" aria-labelledby="results-heading">
@@ -50,6 +52,7 @@ const { title, description, calculatorId } = Astro.props;
 </article>
 
 <style>
+  .input-note { font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1rem; }
   :global(.calculator-field-error), :global(.calculator-error-summary) {
     color: var(--error);
     font-size: 0.85rem;
@@ -130,8 +133,13 @@ const { title, description, calculatorId } = Astro.props;
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
-    position: sticky;
-    top: 72px;
+    align-self: start;
+  }
+  @media (min-width: 900px) { .calc-results { position: sticky; top: 128px; } }
+  @media (max-width: 480px) {
+    .calc-inputs, .calc-results, .calc-section { padding: 1rem; }
+    :global(.result-row) { flex-wrap: wrap; }
+    :global(.result-row dt) { flex-shrink: 1; }
   }
 
   .calc-section {
