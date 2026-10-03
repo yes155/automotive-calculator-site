@@ -1,11 +1,12 @@
 ---
-// CalculatorShell.astro - Instrument panel wrapper with client-side calculation
+import { toolCatalog } from '../lib/toolCatalog';
 interface Props {
   title: string;
   description: string;
   calculatorId: string;
 }
 const { title, description, calculatorId } = Astro.props;
+const tool = toolCatalog.find(tool => tool.id === calculatorId);
 const directions: Record<string, string> = {
   'wheel-offset': 'Enter wheel width in inches and offset (ET) in millimeters for both wheels. A negative offset is allowed.',
   'compression-ratio': 'Choose inches or millimeters for bore, stroke, gasket, and deck dimensions. Enter chamber, dish, and dome volumes in cc.',
@@ -21,23 +22,26 @@ const directions: Record<string, string> = {
 <article class="calculator-page" data-calculator={calculatorId}>
   <header class="calc-header">
     <div class="calc-header-text">
+      <p class="calc-breadcrumb"><a href="/">Workbench</a><span aria-hidden="true">/</span>{tool && <a href={tool.categoryUrl}>{tool.category}</a>}</p>
       <h1>{title}</h1>
       <p>{description}</p>
     </div>
-
+    <span class="module-number" aria-label={`Module ${tool?.number}`}>P{tool?.number}</span>
   </header>
+  <nav class="calc-jump-links" aria-label="Calculator sections"><a href="#inputs-heading">Inputs</a><a href="#results-heading">Results</a><a href="#explanation-heading">Method</a><a href="#limitations-heading">Limitations</a></nav>
 
   <div class="calc-body">
     <section class="calc-inputs" aria-labelledby="inputs-heading">
-      <h2 id="inputs-heading" class="visually-hidden">Calculator Inputs</h2>
+      <h2 id="inputs-heading" class="panel-heading">Input variables <span>01 / INPUT</span></h2>
       <p class="input-directions">{directions[calculatorId]}</p>
       <p class="input-note">Example inputs are prefilled. Follow the input limits below each field, then select Calculate. The address bar saves the inputs for sharing.</p>
       <noscript><p class="calculator-error-summary">Enable JavaScript to calculate with your own inputs. The formula and worked example are available below.</p></noscript>
       <slot name="inputs" />
     </section>
     <aside class="calc-results" aria-live="polite" aria-labelledby="results-heading">
-      <h2 id="results-heading" class="visually-hidden">Results</h2>
+      <h2 id="results-heading" class="panel-heading">Calculated output <span>02 / RESULT</span></h2>
       <slot name="results" />
+      <p class="result-footnote">Check the assumptions and limitations below before making changes to your vehicle.</p>
     </aside>
   </div>
 
@@ -63,121 +67,38 @@ const directions: Record<string, string> = {
 </article>
 
 <style>
-  .input-directions { font-size: 0.9rem; color: var(--text-primary); margin: 0 0 0.75rem; }
-  .input-note { font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1rem; }
-  :global(.calculator-field-error), :global(.calculator-error-summary) {
-    color: var(--error);
-    font-size: 0.85rem;
-    line-height: 1.5;
+  .calculator-page { padding: 26px; max-width: 1200px; margin: 0 auto; }
+  .calc-header { display: flex; justify-content: space-between; align-items: start; gap: 18px; margin-bottom: 20px; }
+  .calc-breadcrumb { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 16px !important; font: 9px/1.6 var(--font-mono) !important; text-transform: uppercase; letter-spacing: .05em; }
+  .calc-breadcrumb span { color: var(--border-secondary); }
+  .calc-header h1 { font: 500 clamp(23px, 2.7vw, 32px)/1.25 var(--font-mono); letter-spacing: -.045em; margin-bottom: 12px; }
+  .calc-header p { margin: 0; font-size: 13px; line-height: 1.7; color: var(--text-secondary); max-width: 72ch; }
+  .module-number { border: 1px solid var(--border-primary); border-radius: 6px; padding: 8px 10px; color: var(--text-muted); font: 10px var(--font-mono); flex-shrink: 0; }
+  .calc-jump-links { display: flex; flex-wrap: wrap; gap: 0; border-top: 1px solid var(--border-primary); border-bottom: 1px solid var(--border-primary); margin-bottom: 22px; }
+  .calc-jump-links a { display: flex; align-items: center; padding: 0 16px; min-height: 40px; font: 9px var(--font-mono); text-transform: uppercase; letter-spacing: .04em; border-right: 1px solid var(--border-primary); }
+  .calc-jump-links a:first-child { padding-left: 0; }
+  .calc-jump-links a:last-child { border: 0; }
+  .calc-body { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; margin-bottom: 22px; align-items: start; }
+  .calc-inputs, .calc-results, .calc-section { border: 1px solid var(--border-primary); border-radius: 12px; padding: 22px; min-width: 0; }
+  .calc-inputs { background: var(--bg-panel); }
+  .calc-results { background: var(--bg-secondary); }
+  .input-directions { font-size: 13px; line-height: 1.65; margin: 0 0 10px; }
+  .input-note { font-size: 11px; line-height: 1.65; color: var(--text-muted); margin: 0 0 22px; }
+  .result-footnote { font: 10px/1.7 var(--font-mono); color: var(--text-muted); border-top: 1px solid var(--border-primary); padding-top: 14px; margin: 18px 0 0; }
+  .calc-section { background: var(--bg-panel); margin-bottom: 16px; }
+  .calc-section h2 { font: 10px/1.5 var(--font-mono); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-blue); padding-bottom: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--border-primary); }
+  .calc-section :global(p), .calc-section :global(li) { font-size: 13px; }
+  .calc-section :global(.worked-example) { background: var(--bg-primary); }
+  .calc-section :global(.limitations) { background: var(--bg-primary); border-color: var(--border-primary); }
+  :global(.calculator-field-error), :global(.calculator-error-summary) { color: var(--error); font-size: 12px; line-height: 1.6; }
+  :global(.calculator-field-error) { margin: 6px 0; }
+  :global(.calculator-error-summary) { border: 1px solid var(--error); border-radius: 8px; padding: 14px; margin: 0 0 14px; background: #af283d06; }
+  :global(.calculator-warning) { color: var(--warning); font-size: 12px; }
+  @media (min-width: 1100px) {
+    .calc-inputs :global(fieldset) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
+    .calc-inputs :global(fieldset > select) { grid-column: 1 / -1; }
+    .calc-inputs :global(.field) { min-width: 0; margin-bottom: 10px; }
   }
-  :global(.calculator-field-error) { margin-top: 0.375rem; }
-  :global(.calculator-error-summary) {
-    padding: 1rem;
-    border: 1px solid var(--error);
-    border-radius: var(--radius-md);
-    margin: 0 0 1rem;
-  }
-  :global(.calculator-warning) { color: var(--accent); font-size: 0.85rem; }
-  :global(.field-label .field-unit) { margin-left: 0.25rem; font-weight: 400; text-transform: none; }
-  .calculator-page {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 1.5rem 1rem 3rem;
-  }
-
-  .calc-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--border-primary);
-  }
-
-  .calc-header h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
-  }
-
-  .calc-header p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    max-width: 65ch;
-    margin: 0;
-  }
-
-  .calc-id {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    background: var(--bg-tertiary);
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-primary);
-    white-space: nowrap;
-  }
-
-  .calc-body {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-  @media (min-width: 900px) {
-    .calc-body {
-      grid-template-columns: 1fr 380px;
-    }
-  }
-
-  .calc-inputs {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-primary);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-  }
-
-  .calc-results {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-primary);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    align-self: start;
-  }
-  @media (min-width: 900px) { .calc-results { position: sticky; top: 128px; } }
-  @media (max-width: 480px) {
-    .calc-inputs, .calc-results, .calc-section { padding: 1rem; }
-    :global(.result-row) { flex-wrap: wrap; }
-    :global(.result-row dt) { flex-shrink: 1; }
-  }
-
-  .calc-section {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-primary);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .calc-section h2 {
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-primary);
-  }
-
-  .calc-limitations {
-    border-color: rgba(239, 68, 68, 0.3);
-  }
-
-  .calc-limitations h2 {
-    color: var(--error);
-  }
+  @media (max-width: 1000px) { .calc-body { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 760px) { .calculator-page { padding: 20px 16px; } .calc-inputs, .calc-results, .calc-section { padding: 16px; } .calc-jump-links a { padding: 0 10px; font-size: 8px; } .module-number { display: none; } .calc-section :global(.result-row) { flex-wrap: wrap; } }
 </style>

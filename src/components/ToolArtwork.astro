@@ -1,0 +1,51 @@
+---
+interface Props { id: string; large?: boolean }
+const { id, large = false } = Astro.props;
+---
+<svg class:list={['tool-artwork', { large }]} viewBox="0 0 160 100" fill="none" aria-hidden="true" focusable="false">
+  <g stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+    {id === 'wheel-offset' && <>
+      <circle cx="80" cy="50" r="34" /><circle cx="80" cy="50" r="27" /><circle cx="80" cy="50" r="8" />
+      <path d="M80 23v19m0 16v19M53 50h19m16 0h19M61 31l13 13m12 12 13 13M61 69l13-13m12-12 13-13" />
+      <path d="M39 14v72m82-72v72M39 10h82m-78-3-4 3 4 3m74-6 4 3-4 3" opacity=".4" />
+      <path d="M80 5v90M30 50h100" stroke-dasharray="2 4" opacity=".25" />
+    </>}
+    {id === 'tire-size' && <>
+      <circle cx="67" cy="50" r="34" /><circle cx="67" cy="50" r="24" /><circle cx="67" cy="50" r="5" />
+      <circle cx="79" cy="50" r="31" stroke-dasharray="3 3" opacity=".45" />
+      <path d="M118 16v68m-5-68h10m-10 68h10M39 50h55M67 22v56" opacity=".5" />
+    </>}
+    {id === 'compression-ratio' && <>
+      <path d="M51 17h58v64H51zM51 29h58M56 62h48v10H56zM80 72v18M59 17V9m42 8V9" />
+      <path d="M60 39h40m-40 6h40m-40 6h40" opacity=".35" />
+      <path d="M121 30v30m-4-26 4-4 4 4m-8 22 4 4 4-4M45 85h70" opacity=".5" />
+    </>}
+    {id === 'engine-displacement' && <>
+      <path d="M42 20h34v47H42zM84 20h34v47H84zM46 46h26v8H46zM88 37h26v8H88zM59 54v25m42-34v26M39 80h82" />
+      <circle cx="59" cy="80" r="6" /><circle cx="101" cy="80" r="6" />
+      <path d="M42 12h34m-30-3-4 3 4 3m26-6 4 3-4 3M127 20v47" opacity=".4" />
+    </>}
+    {id === 'horsepower' && <>
+      <path d="M34 79V22m0 57h94M40 71c18-4 21-12 33-19s15-8 24-19 17-11 25-13" />
+      <path d="M40 63c14-16 35-26 50-22s21 13 32 11" stroke-dasharray="3 3" opacity=".5" />
+      <path d="M56 22v57m23-57v57m23-57v57M34 40h94m-94 20h94" opacity=".15" />
+    </>}
+    {id === 'power-to-weight' && <>
+      <path d="M80 18v60m-30 6h60M45 32h70M45 32 30 59h30L45 32Zm70 0L100 59h30l-15-27Z" />
+      <path d="M31 64c4 7 24 7 28 0m42 0c4 7 24 7 28 0" opacity=".5" /><circle cx="80" cy="28" r="4" />
+    </>}
+    {id === 'quarter-mile' && <>
+      <path d="M33 68h95M42 62l8-17h39l17 17m-64 0h64v10H42zM58 45l-5 17m24-17 6 17" />
+      <circle cx="56" cy="72" r="5" /><circle cx="92" cy="72" r="5" />
+      <path d="M118 20v38m0-37h16v16h-16m0-8h16m-8-8v16M25 46h13m-18 9h14M48 85h68" opacity=".5" />
+    </>}
+    {id === 'fuel-injector' && <>
+      <path d="M69 15h22v11H69zM66 26h28v31H66zM73 57h14v17H73zM77 74h6v8h-6zM94 33h12V22" />
+      <path d="M74 88l-5 6m11-6v8m6-8 5 6M57 35h-8m8 14h-8M70 34h20m-20 6h20m-20 6h20" opacity=".4" />
+    </>}
+  </g>
+</svg>
+<style>
+  .tool-artwork { width: 140px; max-width: 100%; height: 90px; color: var(--ink-blue); }
+  .tool-artwork.large { width: 100%; height: auto; }
+</style>

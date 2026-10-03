@@ -1,6 +1,6 @@
 # Build status and reference decisions
 
-Updated: 2026-10-02
+Updated: 2026-10-03
 
 The other documents preserve the supplied planning handoff. Their phase descriptions are references, not a live completion tracker. The implementation has eight calculators, four category hubs, five guides, an all-calculators index, About, and Methodology.
 
@@ -28,13 +28,13 @@ The other documents preserve the supplied planning handoff. Their phase descript
 - Bore/stroke remains within Engine Displacement. No duplicate URL was introduced.
 - Tire Size already exists and stays available; its research priority does not require removing a working tool.
 - Current input ranges remain intentional UI constraints, including wheel width 3–20 inches. Changing these accepted bounds requires a product decision.
-- The existing visual system remains while the separate Stitch design work proceeds. The older light-first handoff has not triggered an automatic redesign.
+- The user-approved TINK-ON screenshot is now the visual reference. The site uses a light gray instrument workbench, thin borders, rounded modules, dotted work areas, monospace chrome, and black action buttons. See DESIGN.md for implementation and review details.
 - The primary audience is the United States. Power, weight and torque defaults use hp, lb and lb-ft. Wheel widths and rim diameters use inches; tire section width and ET retain their labeled millimeter conventions. Engine dimensions support inches and millimeters. Input directions, US number formatting, persistent range/increment hints, and decimal duty-cycle examples are shown before entry. Hints update with converted units and are connected to inputs through accessible descriptions.
 
 ## Remaining launch work
 
 - Assign the real deployment origin and configure production/preview values.
-- Review the Stitch design before applying a visual overhaul.
+- Review the implemented workbench against the supplied screenshot and adjust any final design preferences.
 - Verify Cloudflare hosting, HTTPS, redirects, indexing and performance on the deployed site.
 - Decide ownership/contact information and analytics/advertising before adding corresponding public claims or policies.
 - Some legacy calculation helpers remain for compatibility. Module and browser tests cover the production formula path. Future formula changes must not introduce a parallel implementation.
@@ -43,9 +43,9 @@ The other documents preserve the supplied planning handoff. Their phase descript
 
 - Clean `npm ci` succeeded.
 - 168 Vitest tests passed across 13 files.
-- 76 Chromium Playwright tests passed, including all 22 pages at 320px, local links/fragments, deployed-origin metadata, URL input restoration and reset recovery, plus persistent input limits, unit conversion hints and static directions without JavaScript.
+- 78 distinct Chromium Playwright tests passed: the existing 76-test suite plus two dashboard/navigation tests. The final 14-test readiness/navigation run passed after the button contrast correction, including all 22 pages at 320px, local links/fragments, deployed-origin metadata, URL input restoration and reset recovery, plus persistent input limits, unit conversion hints and static directions without JavaScript.
 - The static build succeeded. A separate unconfigured build verified noindex, no fabricated canonical, disallow robots and an empty sitemap.
-- Desktop and mobile Wheel Offset screenshots were inspected.
+- Desktop and mobile dashboard and Wheel Offset screenshots, plus a desktop technical guide, were inspected. Guide action text was rechecked after correcting scoped-style precedence.
 - `63360` remains only as an inches-per-mile constant and a displayed formula whose circumference is in inches. No page uses `is:inline`.
 
-Chromium was exercised with an existing executable through `CHROMIUM_EXECUTABLE_PATH`; this does not establish that the standard browser download succeeds on every machine.
+The standard Playwright Chromium download returned a truncated archive in this workspace. Browser verification used a Chromium executable extracted from @sparticuz/chromium through `CHROMIUM_EXECUTABLE_PATH`; no browser package was added to the project dependencies.
