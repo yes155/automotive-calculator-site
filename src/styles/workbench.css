@@ -1,16 +1,44 @@
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-700-normal.woff2') format('woff2');
+}
 :root {
   color-scheme: light;
-  --bg-primary: #f7f8f9;
+  --bg-primary: #f4f5f7;
   --bg-secondary: #eceef0;
   --bg-tertiary: #e5e7ea;
-  --bg-panel: #f3f4f6;
-  --border-primary: #c5c8cd;
+  --bg-panel: #f4f5f7;
+  --border-primary: rgba(28, 29, 32, 0.22);
   --border-secondary: #aeb4be;
-  --text-primary: #1f242c;
+  --text-primary: #1c1d20;
   --text-secondary: #505b6a;
   --text-muted: #626d7d;
   --ink-blue: #344963;
-  --accent: #202329;
+  --accent: #1c1d20;
   --accent-hover: #3d4653;
   --accent-dim: #e4e8ee;
   --accent-glow: #c2cddc;
@@ -20,17 +48,17 @@
   --warning: #815116;
   --info: #344963;
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   --radius-sm: 5px;
   --radius-md: 8px;
   --radius-lg: 13px;
   --shadow-sm: 0 1px 2px #20232908;
-  --shadow-md: 0 12px 36px #2023290d;
+  --shadow-md: 0 24px 60px #1c1d201f;
   --transition: 140ms ease;
 }
 * { box-sizing: border-box; }
 html { font-size: 16px; -webkit-text-size-adjust: 100%; }
-body { margin: 0; padding: 24px; min-height: 100vh; background: #d5d7da; color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body { margin: 0; padding: 24px; min-height: 100vh; background: #dfe0e2; color: var(--text-primary); font-family: var(--font-sans); line-height: 1.6; -webkit-font-smoothing: antialiased; }
 a { color: var(--ink-blue); text-decoration: none; }
 a:hover { text-decoration: underline; }
 h1, h2, h3, h4 { margin: 0; line-height: 1.3; color: var(--text-primary); }
@@ -45,8 +73,8 @@ input, select { max-width: 100%; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .skip-link { position: fixed; left: 32px; top: -100px; z-index: 100; padding: 12px 20px; color: #fff; background: var(--accent); border-radius: 6px; }
 .skip-link:focus { top: 12px; }
-.site-frame { max-width: 1480px; margin: 0 auto; min-height: calc(100vh - 48px); border: 1px solid var(--border-primary); border-radius: 22px; background: var(--bg-secondary); box-shadow: var(--shadow-md); }
-.site-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 22px; border-bottom: 1px solid var(--border-primary); }
+.site-frame { max-width: 1480px; margin: 0 auto; min-height: calc(100vh - 48px); border: 1px solid var(--border-primary); border-radius: 24px; background: var(--bg-secondary); box-shadow: var(--shadow-md); }
+.site-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 22px; border-bottom: 1px solid var(--border-primary); }
 .site-title { display: inline-flex; align-items: center; gap: 12px; color: var(--text-primary); font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: .1em; }
 .site-title:hover { text-decoration: none; }
 .brand-mark { display: grid; grid-template-columns: repeat(2, 7px); gap: 3px; }
@@ -65,8 +93,8 @@ input, select { max-width: 100%; }
 .tool-nav a { min-height: 46px; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid transparent; border-radius: 6px; font: 11px/1.4 var(--font-mono); color: var(--text-secondary); }
 .tool-nav a span:first-child { color: var(--text-muted); font-size: 9px; }
 .tool-nav a:hover { border-color: var(--border-primary); background: var(--bg-primary); text-decoration: none; }
-.tool-nav a[aria-current='page'] { background: var(--accent); color: #fff; border-color: var(--accent); }
-.tool-nav a[aria-current='page'] span:first-child { color: #b7c2d0; }
+.tool-nav a[aria-current='page'] { background: var(--bg-primary); color: var(--text-primary); border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.tool-nav a[aria-current='page'] span:first-child { color: var(--ink-blue); }
 .sidebar-divider { border: 0; border-top: 1px solid var(--border-primary); margin: 22px 10px; }
 .category-nav a { display: flex; align-items: center; min-height: 36px; padding: 5px 10px; font: 10px var(--font-mono); color: var(--text-secondary); }
 .category-nav a[aria-current='page'] { font-weight: 700; color: var(--text-primary); }
@@ -85,6 +113,9 @@ input, select { max-width: 100%; }
 .site-frame #main-content .btn-secondary { background: transparent; color: var(--text-primary); }
 .site-frame #main-content .btn-secondary:hover { background: var(--bg-primary); border-color: var(--accent); }
 .form-actions { flex-wrap: wrap; }
+.site-frame #main-content .calc-inputs .form-actions { background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 8px; padding: 10px; gap: 8px; }
+.site-frame #main-content .btn-primary:active, .site-frame #main-content .btn-secondary:active { transform: translateY(1px); }
+.tool-nav a:active, .module-card:active { background-color: var(--bg-tertiary); }
 .site-frame .field-label, .site-frame legend { font-family: var(--font-mono); }
 .site-frame #main-content .field-input { background: var(--bg-primary); border-color: var(--border-secondary); }
 .site-frame #main-content .field-input:focus { box-shadow: 0 0 0 2px var(--accent-glow); }

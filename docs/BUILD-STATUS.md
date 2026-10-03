@@ -28,7 +28,7 @@ The other documents preserve the supplied planning handoff. Their phase descript
 - Bore/stroke remains within Engine Displacement. No duplicate URL was introduced.
 - Tire Size already exists and stays available; its research priority does not require removing a working tool.
 - Current input ranges remain intentional UI constraints, including wheel width 3–20 inches. Changing these accepted bounds requires a product decision.
-- The user-approved TINK-ON screenshot is now the visual reference. The site uses a light gray instrument workbench, thin borders, rounded modules, dotted work areas, monospace chrome, and black action buttons. See DESIGN.md for implementation and review details.
+- The user-approved TINK-ON screenshot is now the visual reference. The site uses a light gray instrument workbench, thin borders, rounded modules, dotted work areas, self-hosted IBM Plex Mono, and black action buttons. A live reference review refined the palette, selected outlines, and calculator control strips. See DESIGN.md for implementation and review details.
 - The primary audience is the United States. Power, weight and torque defaults use hp, lb and lb-ft. Wheel widths and rim diameters use inches; tire section width and ET retain their labeled millimeter conventions. Engine dimensions support inches and millimeters. Input directions, US number formatting, persistent range/increment hints, and decimal duty-cycle examples are shown before entry. Hints update with converted units and are connected to inputs through accessible descriptions.
 
 ## Remaining launch work
@@ -43,9 +43,9 @@ The other documents preserve the supplied planning handoff. Their phase descript
 
 - Clean `npm ci` succeeded.
 - 168 Vitest tests passed across 13 files.
-- 78 distinct Chromium Playwright tests passed: the existing 76-test suite plus two dashboard/navigation tests. The final 14-test readiness/navigation run passed after the button contrast correction, including all 22 pages at 320px, local links/fragments, deployed-origin metadata, URL input restoration and reset recovery, plus persistent input limits, unit conversion hints and static directions without JavaScript.
+- All 78 Chromium Playwright tests passed after the live-reference refinements, including all 22 pages at 320px, local links/fragments, deployed-origin metadata, URL input restoration and reset recovery, plus persistent input limits, unit conversion hints and static directions without JavaScript.
 - The static build succeeded. A separate unconfigured build verified noindex, no fabricated canonical, disallow robots and an empty sitemap.
-- Desktop and mobile dashboard and Wheel Offset screenshots, plus a desktop technical guide, were inspected. Guide action text was rechecked after correcting scoped-style precedence.
+- Desktop and mobile dashboard and Wheel Offset screenshots, plus a desktop technical guide, were inspected. Guide action text was rechecked after correcting scoped-style precedence. Desktop/phone renders were inspected after the live-reference refinements, and local font loading was confirmed.
 - `63360` remains only as an inches-per-mile constant and a displayed formula whose circumference is in inches. No page uses `is:inline`.
 
 The standard Playwright Chromium download returned a truncated archive in this workspace. Browser verification used a Chromium executable extracted from @sparticuz/chromium through `CHROMIUM_EXECUTABLE_PATH`; no browser package was added to the project dependencies.
